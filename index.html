@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rawview</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">RAWVIEW</a>
+  <span class="nav-center">국민대 시각디자인 — 날것의 피드백</span>
+  <button class="btn-upload" onclick="openUpload()">
+    작업 올리기
+    <span class="gate-badge" id="gate-badge"></span>
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Feedback Platform — 국민대 조형대</div>
+  <h1>작업의 90%에서<br><span class="dim">100%로.</span></h1>
+  <p>익명으로 작업을 올리고 날것의 시선을 받아라.<br>피드백을 줄수록 더 많이 받는다.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num" id="stat-posts">0</span>
+      <span class="stat-label">작업</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="stat-fb">0</span>
+      <span class="stat-label">피드백</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">24</span>
+      <span class="stat-label">참여자</span>
+    </div>
+  </div>
+</section>
+
+<div class="gate-bar-row">
+  <span class="gate-label" id="gate-label">첫 작업은 자유롭게. 이후엔 피드백 3회 필요.</span>
+  <div class="gate-pips">
+    <div class="gate-pip" id="p0"></div>
+    <div class="gate-pip" id="p1"></div>
+    <div class="gate-pip" id="p2"></div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filter('all',this)">전체</button>
+  <button class="filter-btn" onclick="filter('visual',this)">시각</button>
+  <button class="filter-btn" onclick="filter('idea',this)">아이디어</button>
+  <button class="filter-btn" onclick="filter('ux',this)">경험</button>
+</div>
+
+<div class="grid-container">
+  <div class="grid-header">
+    <span>작업 <span id="post-count">0</span>개</span>
+    <span id="gate-status"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- POST MODAL -->
+<div class="modal-bg" id="post-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="m-title-nav">작업</h3>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-img-side">
+        <img id="m-img" src="" alt="">
+      </div>
+      <div class="modal-right">
+        <div class="modal-info">
+          <div class="modal-title" id="m-title"></div>
+          <div class="modal-desc" id="m-desc"></div>
+          <div class="badge-row" id="m-badges"></div>
+        </div>
+        <div class="comments-wrap">
+          <div class="comments-list" id="c-list"></div>
+          <div class="comment-input-wrap">
+            <div class="type-row">
+              <button class="type-chip" data-t="visual" onclick="pickType(this)">시각</button>
+              <button class="type-chip" data-t="idea" onclick="pickType(this)">아이디어</button>
+              <button class="type-chip" data-t="ux" onclick="pickType(this)">경험</button>
+            </div>
+            <div class="input-row">
+              <textarea class="c-input" id="c-input" placeholder="피드백을 남겨요..."></textarea>
+              <button class="send-btn" onclick="sendComment()">전송</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="upload-bg" id="upload-modal">
+  <div class="upload-modal">
+    <div class="upload-header">
+      <h3>작업 올리기</h3>
+      <button class="close-btn" onclick="closeUpload()">✕</button>
+    </div>
+    <div id="locked-view" style="display:none">
+      <div class="locked-view">
+        <div class="locked-title">LOCKED</div>
+        <div class="locked-desc">작업을 올리려면<br>피드백을 3번 남겨야 해요.</div>
+        <div class="locked-pips">
+          <div class="locked-pip" id="lp0"></div>
+          <div class="locked-pip" id="lp1"></div>
+          <div class="locked-pip" id="lp2"></div>
+        </div>
+        <div class="locked-sub" id="locked-sub">0 / 3</div>
+        <button class="back-btn" onclick="closeUpload()">돌아가서 피드백 남기기</button>
+      </div>
+    </div>
+    <div id="open-view">
+      <div class="upload-form">
+        <div>
+          <div class="drop-zone" id="drop">
+            <input type="file" accept="image/*" onchange="onFile(event)">
+            <span class="drop-label">이미지 업로드</span>
+            <span class="drop-sub">클릭하거나 드래그</span>
+            <img class="drop-preview" id="preview" src="" alt="">
+          </div>
+        </div>
+        <div>
+          <label class="f-label">작업 제목</label>
+          <input class="f-input" id="u-title" type="text" placeholder="ex. 브랜드 아이덴티티 리뉴얼">
+        </div>
+        <div>
+          <label class="f-label">어떤 작업이야?</label>
+          <textarea class="f-textarea" id="u-desc" placeholder="무엇을 해결하려 했는지, 어디서 막혔는지..."></textarea>
+        </div>
+        <div>
+          <label class="f-label">원하는 피드백</label>
+          <div class="wanted-row">
+            <button class="w-opt" data-v="visual" onclick="toggleW(this)">시각</button>
+            <button class="w-opt" data-v="idea" onclick="toggleW(this)">아이디어</button>
+            <button class="w-opt" data-v="ux" onclick="toggleW(this)">경험</button>
+          </div>
+        </div>
+        <button class="submit-btn" onclick="doPost()">올리기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
