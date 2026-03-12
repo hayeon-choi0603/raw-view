@@ -688,3 +688,30 @@ body::before {
 .hero {
   background: radial-gradient(ellipse at 60% 40%, rgba(200,164,64,0.04) 0%, transparent 70%);
 }
+
+/* ── 인증 화면 닫기 버튼 ── */
+.auth-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.4);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.auth-close-btn:hover {
+  border-color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.06);
+}
+.auth-wrap {
+  position: relative;
+}
