@@ -103,6 +103,10 @@ const LS = {
 };
 
 // ── 유저 상태 ──
+// ── 어드민 ──
+const ADMIN = 'hanniicorn';
+function isAdmin() { return currentUser && currentUser.username === ADMIN; }
+
 let currentUser = LS.load('user', null); // { id, username }
 let hasPosted   = LS.load('hasPosted', false);
 let fbCount     = LS.load('fbCount', 0);
@@ -256,7 +260,7 @@ function renderPosts(f = 'all') {
   if (!filtered.length) { grid.innerHTML = '<div class="empty">아직 작업이 없어요</div>'; return; }
 
   grid.innerHTML = filtered.map(p => {
-    const isMe  = currentUser && p.user_id === currentUser.id;
+    const isMe  = (currentUser && p.user_id === currentUser.id) || isAdmin();
     const wanted = p.wanted || [];
     const tags  = wanted.map(w => TC[w] ? `<span class="wanted-tag" style="border-color:${TC[w].color}55;color:${TC[w].color}">${TC[w].label}</span>` : '').join('');
     const lines = wanted.map(w => TC[w] ? `<div class="type-line-seg" style="background:${TC[w].color}"></div>` : '').join('');
@@ -296,7 +300,7 @@ async function openPost(id) {
   if (!p) return;
   curPost = id; curType = null;
 
-  const isMe   = currentUser && p.user_id === currentUser.id;
+  const isMe   = (currentUser && p.user_id === currentUser.id) || isAdmin();
   const wanted = p.wanted || [];
 
   document.getElementById('m-title-nav').textContent = p.title;
@@ -341,7 +345,7 @@ function renderComments(postId) {
   }
   list.innerHTML = cs.map(c => {
     const t    = TC[c.type] || TC.visual;
-    const isMe = currentUser && c.user_id === currentUser.id;
+    const isMe = (currentUser && c.user_id === currentUser.id) || isAdmin();
     const delBtn = isMe ? `<button class="delete-comment-btn" onclick="deleteComment(${postId},${c.id},event)">✕</button>` : '';
     return `<div class="comment" style="border-left-color:${t.color}99" id="comment-${c.id}">
       <div class="comment-header">
@@ -658,7 +662,7 @@ async function doRecruitPost() {
 async function openRecruitDetail(id) {
   const r = recruits.find(x => x.id === id); if (!r) return;
   curRecruit = id;
-  const isMe = currentUser && r.user_id === currentUser.id;
+  const isMe = (currentUser && r.user_id === currentUser.id) || isAdmin();
   const t    = RECRUIT_TYPES[r.type] || RECRUIT_TYPES.etc;
 
   document.getElementById('rd-title-nav').textContent = r.title;
@@ -693,7 +697,7 @@ function renderRecruitComments(recruitId) {
     return;
   }
   list.innerHTML = cs.map(c => {
-    const isMe = currentUser && c.user_id === currentUser.id;
+    const isMe = (currentUser && c.user_id === currentUser.id) || isAdmin();
     const delBtn = isMe ? `<button class="delete-comment-btn" onclick="deleteRecruitComment(${recruitId},${c.id},event)">✕</button>` : '';
     return `<div class="rd-comment" id="rc-${c.id}">
       <div class="rd-comment-header">
@@ -746,6 +750,11 @@ function updateNavAuth() {
   document.getElementById('btn-logout').style.display    = loggedIn ? '' : 'none';
   document.getElementById('btn-login-nav').style.display = loggedIn ? 'none' : '';
   document.getElementById('nav-user').textContent        = loggedIn ? currentUser.username : '';
+}
+
+function closeAuthScreen() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
 }
 
 function goToAuth() {
