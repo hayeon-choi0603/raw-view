@@ -22,7 +22,19 @@ const TC={visual:{label:'시각',color:'#d94f3d'},idea:{label:'아이디어',col
 const RT={contest:{label:'공모전',color:'#d94f3d'},project:{label:'프로젝트',color:'#b8942a'},study:{label:'스터디',color:'#3f7a58'},etc:{label:'기타',color:'#666'}};
 
 // ══ LS ══
-const LS={save(k,v){try{localStorage.setItem('rv8_'+k,JSON.stringify(v))}catch{}},load(k,d){try{const v=localStorage.getItem('rv8_'+k);return v?JSON.parse(v):d}catch{return d}}};
+const LS={
+  save(k,v){try{localStorage.setItem('rv8_'+k,JSON.stringify(v))}catch{}},
+  load(k,d){
+    try{
+      // rv8_ 먼저, 없으면 기존 rv7_ 확인 (hanniicorn 같은 기존 계정 호환)
+      const v8=localStorage.getItem('rv8_'+k);
+      if(v8) return JSON.parse(v8);
+      const v7=localStorage.getItem('rv7_'+k)||localStorage.getItem('rv3_'+k);
+      if(v7){ const parsed=JSON.parse(v7); LS.save(k,parsed); return parsed; }
+      return d;
+    }catch{return d}
+  }
+};
 
 // ══ 상태 ══
 const ADMIN='hanniicorn';
@@ -61,12 +73,15 @@ async function doLogin(){
   const password=getPin('login');
   if(!username){errEl.textContent='아이디를 입력해요';return}
   if(password.length<4){errEl.textContent='PIN 4자리를 입력해요';return}
+  // role 컬럼 없는 기존 계정도 호환
   const rows=await sb.get('profiles',`username=eq.${encodeURIComponent(username)}&select=id,username,password_hash,role`);
   if(!rows.length){errEl.textContent='존재하지 않는 아이디예요';return}
   const user=rows[0];
   const hash=await simpleHash(password);
   if(user.password_hash!==hash){errEl.textContent='비밀번호가 틀렸어요';return}
-  cu={id:user.id,username:user.username,role:user.role||'general'};
+  // role 없으면 admin은 designer, 나머지는 designer 기본값
+  const role = user.role || (user.username===ADMIN ? 'designer' : 'designer');
+  cu={id:user.id,username:user.username,role};
   saveL();resetPin('login');enterApp();
 }
 async function doSignup(){
@@ -75,7 +90,7 @@ async function doSignup(){
   const errEl=document.getElementById('signup-err');errEl.textContent='';
   if(!username){errEl.textContent='아이디를 입력해요';return}
   if(!/^[a-zA-Z0-9_]+$/.test(username)){errEl.textContent='영문·숫자·_ 만 가능해요';return}
-  if(!signupRole){errEl.textContent='디자이너 또는 일반인을 선택해요';return}
+  if(!signupRole) signupRole='designer'; // 선택 안 했으면 기본값
   if(pw.length<4){errEl.textContent='PIN 4자리를 입력해요';return}
   const existing=await sb.get('profiles',`username=eq.${encodeURIComponent(username)}&select=id`);
   if(existing.length){errEl.textContent='이미 사용 중인 아이디예요';return}
@@ -140,6 +155,7 @@ function enterStudy(){
   document.getElementById('tab-feed').style.display='none';
   document.getElementById('tab-recruit').style.display='none';
   document.getElementById('tab-study').style.display='block';
+  initRealtime();
   loadStudyData();
 }
 function switchTab(tab){if(tab==='feed')enterFeedback();else if(tab==='recruit')enterRecruit()}
@@ -615,6 +631,117 @@ async function saveStudyRecord(){
   const existing=await sb.get('study_logs',`user_id=eq.${cu.id}&date=eq.${todayStr}&select=id`);
   if(existing.length){await sb.patch('study_logs',existing[0].id,{total_seconds:totalSec,username:cu.username,role:cu.role||'general'})}
   else{await sb.post('study_logs',{user_id:cu.id,username:cu.username,date:todayStr,total_seconds:totalSec,role:cu.role||'general'})}
+  // Realtime 브로드캐스트 — 저장할 때마다 채널로 알림 전송
+  if(realtimeChannel){
+    realtimeChannel.send({type:'broadcast',event:'study_update',payload:{username:cu.username,total_seconds:totalSec,role:cu.role||'general'}});
+  }
+}
+
+
+// ══ SUPABASE REALTIME ══
+let realtimeChannel = null;
+
+function initRealtime(){
+  // 이미 연결됐으면 스킵
+  if(realtimeChannel) return;
+  // 비로그인 상태에서는 Realtime 안 씀 (렉 방지)
+  if(!cu) return;
+
+  // Supabase Realtime 클라이언트 직접 연결
+  const wsUrl = `wss://icbkaqjefvzufthhgtkv.supabase.co/realtime/v1/websocket?apikey=${SB_KEY}&vsn=1.0.0`;
+  const socket = new WebSocket(wsUrl);
+  let heartbeat;
+
+  socket.onopen = () => {
+    // 채널 join
+    socket.send(JSON.stringify({
+      topic: 'realtime:rawview-study',
+      event: 'phx_join',
+      payload: { config: { broadcast: { self: false } } },
+      ref: '1'
+    }));
+    // 30초마다 heartbeat
+    heartbeat = setInterval(() => {
+      socket.send(JSON.stringify({ topic: 'phoenix', event: 'heartbeat', payload: {}, ref: null }));
+    }, 30000);
+  };
+
+  socket.onmessage = (e) => {
+    try {
+      const msg = JSON.parse(e.data);
+      // 다른 사람이 공부 기록 업데이트했을 때
+      if(msg.event === 'study_update' && msg.payload){
+        const p = msg.payload;
+        // 친구 현황 실시간 업데이트
+        realtimeUpdateFriend(p);
+        // 랭킹도 5초 후 새로고침 (너무 자주 호출 방지)
+        clearTimeout(window._rankRefreshTimer);
+        window._rankRefreshTimer = setTimeout(()=>{
+          if(document.getElementById('tab-study').style.display !== 'none') loadStudyData();
+        }, 5000);
+      }
+    } catch(err){}
+  };
+
+  socket.onerror = () => {};
+  socket.onclose = () => {
+    clearInterval(heartbeat);
+    realtimeChannel = null;
+    // 스터디 방 열려있을 때만 재연결 (30초 후)
+    setTimeout(()=>{
+      if(document.getElementById('tab-study')&&document.getElementById('tab-study').style.display!=='none'){
+        initRealtime();
+      }
+    }, 30000);
+  };
+
+  // 브로드캐스트 전송용 래퍼
+  realtimeChannel = {
+    send(payload){
+      if(socket.readyState === WebSocket.OPEN){
+        socket.send(JSON.stringify({
+          topic: 'realtime:rawview-study',
+          event: 'broadcast',
+          payload,
+          ref: null
+        }));
+      }
+    }
+  };
+}
+
+function realtimeUpdateFriend(data){
+  // 스터디 방이 열려있을 때만 DOM 업데이트
+  if(document.getElementById('tab-study').style.display === 'none') return;
+
+  const friendList = document.getElementById('friend-list');
+  if(!friendList) return;
+
+  // 기존 해당 유저 카드 찾아서 업데이트 or 새로 추가
+  const existing = friendList.querySelector(`[data-friend="${data.username}"]`);
+  const h = Math.floor(data.total_seconds/3600);
+  const m = Math.floor((data.total_seconds%3600)/60);
+  const timeStr = h>0 ? `${h}h ${m}m` : `${m}m`;
+  const roleLabel = data.role==='designer' ? '디자이너' : '일반인';
+  const isMe = cu && data.username === cu.username;
+
+  const cardHtml = `<div class="friend-item" data-friend="${data.username}" style="animation:fadeUp .3s ease">
+    <div class="friend-avatar">${data.username.substring(0,2).toUpperCase()}</div>
+    <div class="friend-info">
+      <div class="friend-name">${data.username}${isMe?' (나)':''}</div>
+      <div class="friend-status">${roleLabel} · 오늘 ${timeStr} <span style="color:var(--green);font-size:.4rem;margin-left:4px">● 방금 업데이트</span></div>
+    </div>
+    <div class="friend-online"></div>
+  </div>`;
+
+  if(existing){
+    existing.outerHTML = cardHtml;
+  } else {
+    // 없으면 맨 위에 추가
+    const noData = friendList.querySelector('[style*="text-align:center"]');
+    if(noData) noData.remove();
+    friendList.insertAdjacentHTML('afterbegin', cardHtml);
+  }
 }
 
 async function loadStudyData(){
