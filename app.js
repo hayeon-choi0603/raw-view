@@ -299,7 +299,7 @@ function swipeLeft(card){
   setTimeout(()=>{shortsIndex=Math.min(shortsIndex+1,filteredPosts.length-1);renderCardStack()},350);
 }
 function skipCard(e){e.stopPropagation();const c=document.getElementById('card-stack').querySelector('.s-card.current');if(c)swipeLeft(c)}
-function openPostFromCard(id,e){if(e)e.stopPropagation();openPost(id)}
+function openPostFromCard(id,e){if(e)e.stopPropagation();openPost(typeof id==='string'?parseInt(id):id)}
 
 // ══ POSTS ══
 function filterPosts(type,btn){
@@ -311,6 +311,7 @@ function filterPosts(type,btn){
 function renderPosts(){renderShorts()} // 호환
 
 async function openPost(id){
+  id=typeof id==='string'?parseInt(id):id;
   const p=posts.find(x=>x.id===id);if(!p)return;
   curPost=id;curType=null;
   const isMe=(cu&&p.user_id===cu.id)||isAdmin();
@@ -334,7 +335,7 @@ async function openPost(id){
   document.body.style.overflow='hidden';
   renderComments(id);
 }
-function closeModal(){document.getElementById('post-modal').classList.remove('open');document.body.style.overflow=''}
+function closeModal(){document.getElementById('post-modal').classList.remove('open');document.body.style.overflow='';curPost=null;}
 
 function renderComments(pid){
   const list=document.getElementById('c-list');
@@ -481,7 +482,8 @@ async function doEdit(){
 // ══ 삭제 ══
 async function deletePost(){
   if(!confirm('작업을 삭제할까요?'))return;
-  await sb.delete('posts',curPost);posts=posts.filter(x=>x.id!==curPost);
+  const delId=typeof curPost==='string'?parseInt(curPost):curPost;
+  await sb.delete('posts',delId);posts=posts.filter(x=>x.id!==delId);
   closeModal();renderShorts();toast('삭제됐어요');
 }
 
