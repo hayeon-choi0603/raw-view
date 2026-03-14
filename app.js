@@ -440,7 +440,20 @@ async function doPost(){
   if(!imgData){toast('이미지를 올려요');return}
   if(!wanted.length){toast('피드백 타입을 선택해요');return}
   const btn=document.getElementById('submit-btn');btn.textContent='올리는 중...';btn.style.opacity='.6';
-  const newPost=await sb.post('posts',{title,description:desc||'작업을 봐주세요.',img:imgData,version:ver,wanted,author:cu.username,user_id:cu.id,comment_count:0,keywords:{},author_role:cu.role||'general'});
+  // 이미지 압축 (용량 초과 방지)
+  let finalImg=imgData;
+  try{
+    if(imgData.length>400000){
+      const _img=new Image();_img.src=imgData;
+      await new Promise(r=>{_img.onload=r;_img.onerror=r});
+      const _c=document.createElement('canvas');
+      const _ratio=Math.min(800/_img.width,800/_img.height,1);
+      _c.width=Math.round(_img.width*_ratio);_c.height=Math.round(_img.height*_ratio);
+      _c.getContext('2d').drawImage(_img,0,0,_c.width,_c.height);
+      finalImg=_c.toDataURL('image/jpeg',0.75);
+    }
+  }catch(_e){finalImg=imgData}
+  const newPost=await sb.post('posts',{title,description:desc||'작업을 봐주세요.',img:finalImg,version:ver,wanted,author:cu.username,user_id:cu.id,comment_count:0,keywords:{},author_role:cu.role||'general'});
   btn.textContent='올리기';btn.style.opacity='';
   if(newPost&&newPost.id){posts.unshift(newPost);hasPosted=true;fbCount=0;saveL();gateUpdate();renderShorts();closeUpload();resetUploadForm();toast('작업이 올라갔어요 🔥')}
   else toast('오류가 났어요. 다시 시도해줘요.');
@@ -817,9 +830,21 @@ async function loadStudyData(){
 }
 
 // ══ 통계 ══
-function updateStats(){
+async function updateStats(){
   document.getElementById('stat-posts').textContent=posts.length;
   document.getElementById('stat-fb').textContent=posts.reduce((a,p)=>a+(p.comment_count||0),0);
+  // 디자이너/일반인 수 가져오기
+  try{
+    const profiles=await sb.get('profiles','select=role');
+    if(Array.isArray(profiles)){
+      const designers=profiles.filter(p=>p.role==='designer'||!p.role).length;
+      const generals=profiles.filter(p=>p.role==='general').length;
+      const dEl=document.getElementById('stat-designers');
+      const gEl=document.getElementById('stat-generals');
+      if(dEl) dEl.textContent=designers;
+      if(gEl) gEl.textContent=generals;
+    }
+  }catch{}
 }
 
 // ══ TOAST ══
@@ -1072,7 +1097,7 @@ function gmAttachDrag(card){
 async function init(){
   const data=await sb.get('posts','order=created_at.desc');
   posts=Array.isArray(data)?data:[];
-  updateStats();gateUpdate();
+  await updateStats();gateUpdate();
 }
 
 // 시작
