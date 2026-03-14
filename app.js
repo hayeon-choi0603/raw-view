@@ -481,10 +481,29 @@ async function doEdit(){
 
 // ══ 삭제 ══
 async function deletePost(){
-  if(!confirm('작업을 삭제할까요?'))return;
-  const delId=typeof curPost==='string'?parseInt(curPost):curPost;
-  await sb.delete('posts',delId);posts=posts.filter(x=>x.id!==delId);
-  closeModal();renderShorts();toast('삭제됐어요');
+  // curPost를 먼저 로컬 변수에 저장 (confirm 후 초기화 방지)
+  const delId = typeof curPost==='string' ? parseInt(curPost) : Number(curPost);
+  if(!delId){ toast('삭제할 게시물을 찾을 수 없어요'); return; }
+  if(!confirm('정말 삭제할까요? 피드백도 모두 사라져요.')) return;
+
+  // 댓글 먼저 삭제 후 게시물 삭제
+  await fetch(`${SB_URL}/rest/v1/comments?post_id=eq.${delId}`, {
+    method: 'DELETE',
+    headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+  });
+  const r = await fetch(`${SB_URL}/rest/v1/posts?id=eq.${delId}`, {
+    method: 'DELETE',
+    headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+  });
+
+  if(r.status === 204 || r.ok){
+    posts = posts.filter(x => Number(x.id) !== delId);
+    closeModal();
+    renderShorts();
+    toast('삭제됐어요!');
+  } else {
+    toast('삭제 실패. 다시 시도해줘요.');
+  }
 }
 
 // ══ 팀모집 ══
