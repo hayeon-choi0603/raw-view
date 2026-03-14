@@ -4,29 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rawview</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- ══ AUTH ══ -->
 <div id="auth-screen">
+  <button class="auth-close" onclick="closeAuthScreen()">✕</button>
   <div class="auth-wrap">
-    <button class="auth-close-btn" onclick="closeAuthScreen()" title="닫기">✕</button>
-    <div class="auth-logo">RAWVIEW</div>
-    <div class="auth-sub">국민대 시각디자인 — 날것의 피드백</div>
+    <div class="auth-logo mono">RAWVIEW</div>
     <div class="auth-tabs">
       <button class="auth-tab active" id="tab-login" onclick="switchAuth('login')">로그인</button>
       <button class="auth-tab" id="tab-signup" onclick="switchAuth('signup')">회원가입</button>
     </div>
+    <!-- 로그인 -->
     <div id="login-form" class="auth-form">
       <input class="auth-input" id="login-id" type="text" placeholder="아이디">
-      <div class="pin-label">PIN 번호</div>
+      <div class="pin-label">PIN</div>
       <div class="pin-row" id="login-pin-row">
-        <div class="pin-dot" id="login-pin-0"></div>
-        <div class="pin-dot" id="login-pin-1"></div>
-        <div class="pin-dot" id="login-pin-2"></div>
-        <div class="pin-dot" id="login-pin-3"></div>
+        <div class="pin-dot" id="login-pin-0"></div><div class="pin-dot" id="login-pin-1"></div>
+        <div class="pin-dot" id="login-pin-2"></div><div class="pin-dot" id="login-pin-3"></div>
       </div>
       <div class="pin-pad">
         <button onclick="pinInput('login',1)">1</button><button onclick="pinInput('login',2)">2</button><button onclick="pinInput('login',3)">3</button>
@@ -37,14 +37,18 @@
       <button class="auth-btn" onclick="doLogin()">로그인</button>
       <div class="auth-err" id="login-err"></div>
     </div>
+    <!-- 회원가입 -->
     <div id="signup-form" class="auth-form" style="display:none">
-      <input class="auth-input" id="signup-id" type="text" placeholder="아이디 (영문·숫자·_ 만 가능)">
-      <div class="pin-label">PIN 번호 설정 (숫자 4자리)</div>
+      <input class="auth-input" id="signup-id" type="text" placeholder="아이디 (영문·숫자·_)">
+      <div class="f-label" style="margin-top:4px">나는</div>
+      <div class="role-row">
+        <button class="role-btn" id="role-designer" onclick="selectRole('designer')">🎨 디자이너</button>
+        <button class="role-btn" id="role-general" onclick="selectRole('general')">👤 일반인</button>
+      </div>
+      <div class="pin-label">PIN 설정</div>
       <div class="pin-row" id="signup-pin-row">
-        <div class="pin-dot" id="signup-pin-0"></div>
-        <div class="pin-dot" id="signup-pin-1"></div>
-        <div class="pin-dot" id="signup-pin-2"></div>
-        <div class="pin-dot" id="signup-pin-3"></div>
+        <div class="pin-dot" id="signup-pin-0"></div><div class="pin-dot" id="signup-pin-1"></div>
+        <div class="pin-dot" id="signup-pin-2"></div><div class="pin-dot" id="signup-pin-3"></div>
       </div>
       <div class="pin-pad">
         <button onclick="pinInput('signup',1)">1</button><button onclick="pinInput('signup',2)">2</button><button onclick="pinInput('signup',3)">3</button>
@@ -58,77 +62,323 @@
   </div>
 </div>
 
+<!-- ══ 진입 분기 ══ -->
+<div id="entry-gate">
+  <div class="eg-logo">RAWVIEW</div>
+  <h1 class="eg-title">나는 어떤<br>사람이에요?</h1>
+  <p class="eg-sub">목적에 맞는 화면으로 바로 안내해드려요.</p>
+  <div class="eg-cards">
+    <!-- 디자이너 -->
+    <div class="eg-card eg-card-designer" onclick="enterAsDesigner()">
+      <svg class="eg-card-shape" style="top:-20px;right:-20px" width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="50" fill="rgba(0,0,0,0.07)"/>
+        <circle cx="60" cy="60" r="25" fill="rgba(0,0,0,0.06)"/>
+      </svg>
+      <div>
+        <div class="eg-card-label">Designer</div>
+        <div class="eg-card-title">나는<br>디자이너</div>
+        <div class="eg-card-desc">작업 올리기,<br>팀모집, 스터디까지</div>
+      </div>
+      <div class="eg-card-arrow">↗</div>
+    </div>
+    <!-- 일반인 -->
+    <div class="eg-card eg-card-general" onclick="enterAsGeneral()">
+      <svg class="eg-card-shape" style="top:-10px;right:-10px" width="110" height="110" viewBox="0 0 110 110">
+        <rect x="15" y="15" width="80" height="80" rx="10" fill="rgba(255,255,255,0.05)"/>
+        <rect x="35" y="35" width="40" height="40" rx="5" fill="rgba(255,255,255,0.04)"/>
+      </svg>
+      <div>
+        <div class="eg-card-label">General</div>
+        <div class="eg-card-title">그냥<br>구경할래</div>
+        <div class="eg-card-desc">가입 없이<br>바로 반응할 수 있어요</div>
+      </div>
+      <div class="eg-card-arrow">↗</div>
+    </div>
+  </div>
+  <p class="eg-login">이미 계정이 있어? <a onclick="showLoginFromGate()">로그인</a></p>
+</div>
+
+<!-- ══ 일반인 스와이프 모드 ══ -->
+<div id="general-mode">
+  <div class="gm-top" style="position:relative">
+    <button class="gm-back" onclick="backToGate()">← 나가기</button>
+    <div class="gm-title">RAWVIEW</div>
+    <div class="gm-progress" id="gm-progress">0 / 0</div>
+    <button class="gm-home" onclick="enterAsDesigner()">디자이너로 보기 →</button>
+  </div>
+  <div class="gm-reaction-bar" id="gm-reaction-bar">
+    <div class="gm-react-chip">👍 <span id="gm-nice-count">0</span></div>
+    <div class="gm-react-chip">💥 <span id="gm-fire-count">0</span></div>
+    <div class="gm-react-chip">👎 <span id="gm-bad-count">0</span></div>
+  </div>
+  <div class="gm-stack" id="gm-stack">
+    <div class="gm-label gm-label-nope" id="gm-label-nope">NOPE</div>
+    <div class="gm-label gm-label-nice" id="gm-label-nice">NICE</div>
+    <div class="gm-empty" id="gm-empty" style="display:none">
+      <p>작업을 다 봤어요!</p>
+      <button class="gm-signup-nudge" onclick="goToAuth()">가입하고 더 보기 →</button>
+    </div>
+  </div>
+  <div class="gm-actions">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <button class="gm-btn gm-btn-skip" onclick="gmReact('skip')" title="건너뛰기">↩</button>
+      <div class="gm-btn-hint">넘기기</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <button class="gm-btn gm-btn-bad" onclick="gmReact('bad')" title="별로">👎</button>
+      <div class="gm-btn-hint">별로야</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <button class="gm-btn gm-btn-good" onclick="gmReact('good')" title="좋아">👍</button>
+      <div class="gm-btn-hint">좋아!</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <button class="gm-btn gm-btn-fire" onclick="gmReact('fire')" title="강렬해">💥</button>
+      <div class="gm-btn-hint">강렬해</div>
+    </div>
+  </div>
+
+<!-- 한마디 팝업 -->
+<div class="gm-comment-popup" id="gm-comment-popup">
+  <div class="gm-comment-box">
+    <div class="gm-comment-title" id="gm-comment-reaction-title">💥 강렬하다고 생각했어요!</div>
+    <div class="gm-comment-sub">한마디 남기면 디자이너에게 큰 힘이 돼요 (선택)</div>
+    <div class="gm-comment-tags">
+      <button class="gm-ctag" onclick="gmToggleCtag(this)">색감이 눈에 띄어요</button>
+      <button class="gm-ctag" onclick="gmToggleCtag(this)">뭔지 바로 이해돼요</button>
+      <button class="gm-ctag" onclick="gmToggleCtag(this)">복잡해 보여요</button>
+      <button class="gm-ctag" onclick="gmToggleCtag(this)">뭔가 끌려요</button>
+      <button class="gm-ctag" onclick="gmToggleCtag(this)">심심해 보여요</button>
+      <button class="gm-ctag" onclick="gmToggleCtag(this)">신선해요</button>
+    </div>
+    <textarea class="gm-comment-input" id="gm-comment-input" placeholder="짧게 한마디 남겨봐요..."></textarea>
+    <div class="gm-comment-actions">
+      <button class="gm-comment-skip" onclick="gmCommentSkip()">그냥 넘길게</button>
+      <button class="gm-comment-send" onclick="gmCommentSend()">전달하기 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- 트릿 팝업 -->
+<div class="gm-treat-popup" id="gm-treat-popup">
+  <div class="gm-treat-box">
+    <span class="gm-treat-emoji" id="gm-treat-emoji">🎨</span>
+    <div class="gm-treat-title" id="gm-treat-title">당신은 감각파!</div>
+    <div class="gm-treat-desc" id="gm-treat-desc">좋아요를 많이 눌렀어요. 시각적으로 끌리는 작업을 금방 알아보는 눈이 있네요.</div>
+    <div class="gm-treat-stats">
+      <div class="gm-treat-stat"><span id="gm-ts-nice">0</span><small>👍 좋아</small></div>
+      <div class="gm-treat-stat"><span id="gm-ts-fire">0</span><small>💥 강렬</small></div>
+      <div class="gm-treat-stat"><span id="gm-ts-bad">0</span><small>👎 별로</small></div>
+    </div>
+    <button class="gm-treat-btn-main" onclick="gmTreatSignup()">가입하고 더 보기 →</button>
+    <button class="gm-treat-btn-skip" onclick="gmTreatContinue()">계속 구경할게</button>
+  </div>
+</div>
+
+</div>
+
 <!-- ══ APP ══ -->
 <div id="app" style="display:none">
+
+<!-- NAV -->
 <nav>
-  <a href="#" class="logo">RAWVIEW</a>
-  <div class="nav-tabs">
-    <button class="nav-tab active" id="ntab-feed" onclick="switchTab('feed',this)">피드백</button>
-    <button class="nav-tab" id="ntab-recruit" onclick="switchTab('recruit',this)">팀 모집</button>
-  </div>
+  <a href="#" class="nav-logo" onclick="goLanding()">RAWVIEW</a>
   <div class="nav-right">
     <span class="nav-user" id="nav-user"></span>
-    <button class="btn-upload" onclick="openUpload()">+ 작업 올리기<span class="gate-badge" id="gate-badge"></span></button>
-    <button class="btn-logout" id="btn-logout" onclick="doLogout()">로그아웃</button>
-    <button class="btn-logout" id="btn-login-nav" onclick="goToAuth()" style="display:none">로그인 / 가입</button>
+    <span class="nav-role-badge" id="nav-role-badge" style="display:none"></span>
+    <button class="nav-btn" id="btn-login-nav" onclick="goToAuth()" style="display:none">로그인 / 가입</button>
+    <button class="nav-btn danger" id="btn-logout" onclick="doLogout()" style="display:none">로그아웃</button>
   </div>
 </nav>
 
-<!-- ── 피드백 탭 ── -->
-<div id="tab-feed">
-  <section class="hero">
-    <div class="hero-label">Feedback Platform — 국민대 조형대</div>
-    <h1>작업의 90%에서<br><span class="dim">100%로.</span></h1>
-    <p>막힌 데가 어딘지, 우리가 찾아줄게.</p>
-    <div class="hero-stats">
-      <div class="stat"><span class="stat-num" id="stat-posts">0</span><span class="stat-label">작업</span></div>
-      <div class="stat"><span class="stat-num" id="stat-fb">0</span><span class="stat-label">피드백</span></div>
-      <div class="stat"><span class="stat-num" id="stat-users">0</span><span class="stat-label">참여자</span></div>
-    </div>
-  </section>
-
-  <div class="gate-bar-row">
-    <span class="gate-label" id="gate-label">첫 작업은 자유롭게. 이후엔 피드백 3회 필요.</span>
-    <div class="gate-pips">
-      <div class="gate-pip" id="p0"></div>
-      <div class="gate-pip" id="p1"></div>
-      <div class="gate-pip" id="p2"></div>
-      <span class="gate-status-txt" id="gate-status"></span>
+<!-- ══ 랜딩 ══ -->
+<div id="landing">
+  <!-- 헤더 -->
+  <div class="land-header">
+    <h1 class="land-title">날것의 피드백. <em>90→100.</em></h1>
+    <div class="land-stats">
+      <div class="land-stat"><span id="stat-posts">0</span><small>작업</small></div>
+      <div class="land-stat"><span id="stat-fb">0</span><small>피드백</small></div>
+      <div class="land-stat"><span id="stat-users">0</span><small>참여자</small></div>
     </div>
   </div>
 
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterPosts('all',this)">전체</button>
-    <button class="filter-btn" onclick="filterPosts('visual',this)">시각</button>
-    <button class="filter-btn" onclick="filterPosts('idea',this)">아이디어</button>
-    <button class="filter-btn" onclick="filterPosts('ux',this)">경험</button>
+  <!-- 카드 1: 피드백 -->
+  <div class="door door-feedback" onclick="enterFeedback()">
+    <svg class="door-bg-shape" style="top:-30px;right:-30px" width="200" height="200" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="90" fill="rgba(0,0,0,0.13)"/>
+      <circle cx="100" cy="100" r="45" fill="rgba(0,0,0,0.1)"/>
+    </svg>
+    <div class="door-arrow">↗</div>
+    <div>
+      <div class="door-tag">Feedback</div>
+      <div class="door-title">작업을<br>올려봐요</div>
+      <div class="door-sub">디자이너 + 일반인 시선</div>
+    </div>
+    <div class="door-bignum">01</div>
   </div>
-  <div class="grid-container">
-    <div class="grid-header"><span>작업 <span id="post-count">0</span>개</span></div>
-    <div class="grid" id="grid"></div>
+
+  <!-- 카드 2: 팀모집 -->
+  <div class="door door-recruit" onclick="enterRecruit()">
+    <svg class="door-bg-shape" style="top:-20px;right:-20px" width="180" height="180" viewBox="0 0 180 180">
+      <rect x="20" y="20" width="140" height="140" rx="16" fill="rgba(0,0,0,0.13)"/>
+      <rect x="55" y="55" width="70" height="70" rx="8" fill="rgba(0,0,0,0.1)"/>
+    </svg>
+    <div class="door-arrow">↗</div>
+    <div>
+      <div class="door-tag">Team</div>
+      <div class="door-title">팀원을<br>구해요</div>
+      <div class="door-sub">공모전 · 프로젝트 · 스터디</div>
+    </div>
+    <div class="door-bignum">02</div>
+  </div>
+
+  <!-- 카드 3: 스터디 (풀 가로) -->
+  <div class="door door-study" onclick="enterStudy()">
+    <svg class="door-bg-shape" style="top:50%;right:-40px;transform:translateY(-50%)" width="260" height="260" viewBox="0 0 260 260">
+      <circle cx="130" cy="130" r="110" fill="rgba(0,0,0,0.12)"/>
+      <circle cx="130" cy="130" r="60" fill="rgba(255,255,255,0.08)"/>
+      <circle cx="130" cy="130" r="20" fill="rgba(0,0,0,0.1)"/>
+    </svg>
+    <div class="door-arrow">↗</div>
+    <div>
+      <div class="door-tag">Study</div>
+      <div class="door-title">함께 성장해요</div>
+      <div class="door-sub">타이머 · 주간 랭킹 · 친구 현황</div>
+    </div>
+    <div class="door-bignum">03</div>
+    <div class="door-badge">NEW</div>
   </div>
 </div>
 
-<!-- ── 팀 모집 탭 ── -->
-<div id="tab-recruit" style="display:none">
-  <section class="hero">
-    <div class="hero-label">Team Recruit — 같이 만들자</div>
-    <h1>팀원을<br><span class="dim">구해요.</span></h1>
-    <p>공모전 팀원, 프로젝트 파트너, 스터디 멤버.<br>무엇이든 올려봐요.</p>
-    <button class="btn-recruit-post" onclick="openRecruitUpload()">+ 모집 글 올리기</button>
-  </section>
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterRecruit('all',this)">전체</button>
-    <button class="filter-btn" onclick="filterRecruit('contest',this)">공모전</button>
-    <button class="filter-btn" onclick="filterRecruit('project',this)">프로젝트</button>
-    <button class="filter-btn" onclick="filterRecruit('study',this)">스터디</button>
-    <button class="filter-btn" onclick="filterRecruit('etc',this)">기타</button>
+<!-- ══ 피드백 방 ══ -->
+<div id="tab-feed">
+  <div class="room-nav">
+    <button class="back-btn" onclick="goLanding()">← 돌아가기</button>
+    <span class="room-name">피드백</span>
+    <div class="room-right">
+      <button class="btn-post" onclick="openUpload()">+ 작업 올리기<span class="gate-badge" id="gate-badge"></span></button>
+    </div>
   </div>
-  <div class="grid-container">
-    <div class="grid-header"><span>모집 글 <span id="recruit-count">0</span>개</span></div>
+  <div class="feed-top">
+    <div class="feed-role-tabs">
+      <button class="frt-btn active-all" id="frt-all" onclick="setRoleFilter('all',this)">전체</button>
+      <button class="frt-btn" id="frt-d" onclick="setRoleFilter('designer',this)">디자이너 시선</button>
+      <button class="frt-btn" id="frt-g" onclick="setRoleFilter('general',this)">일반인 시선</button>
+    </div>
+    <div class="gate-row">
+      <span class="gate-txt" id="gate-label"></span>
+      <div class="gate-pips">
+        <div class="gate-pip" id="p0"></div>
+        <div class="gate-pip" id="p1"></div>
+        <div class="gate-pip" id="p2"></div>
+      </div>
+      <span style="font-family:'Space Mono',monospace;font-size:.46rem;color:var(--green);letter-spacing:2px;margin-left:6px" id="gate-status"></span>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <button class="f-btn active" onclick="filterPosts('all',this)">전체</button>
+    <button class="f-btn" onclick="filterPosts('visual',this)">시각</button>
+    <button class="f-btn" onclick="filterPosts('idea',this)">아이디어</button>
+    <button class="f-btn" onclick="filterPosts('ux',this)">경험</button>
+  </div>
+  <!-- 숏츠형 피드 -->
+  <div class="shorts-wrap" id="shorts-wrap">
+    <div class="card-stack" id="card-stack">
+      <div class="empty-feed" id="empty-feed" style="display:none">
+        <p>아직 작업이 없어요</p>
+      </div>
+    </div>
+    <div class="swipe-left-hint" id="swipe-left-hint">SKIP ←</div>
+    <div class="swipe-right-hint" id="swipe-right-hint">→ 피드백</div>
+    <div class="shorts-hint">
+      <span>← 건너뛰기</span>
+      <span>|</span>
+      <span>피드백 하기 →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 팀모집 방 ══ -->
+<div id="tab-recruit" style="display:none">
+  <div class="room-nav">
+    <button class="back-btn" onclick="goLanding()">← 돌아가기</button>
+    <span class="room-name">팀 모집</span>
+    <div class="room-right">
+      <button class="btn-post" onclick="openRecruitUpload()">+ 모집 글 올리기</button>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <button class="f-btn active" onclick="filterRecruit('all',this)">전체</button>
+    <button class="f-btn" onclick="filterRecruit('contest',this)">공모전</button>
+    <button class="f-btn" onclick="filterRecruit('project',this)">프로젝트</button>
+    <button class="f-btn" onclick="filterRecruit('study',this)">스터디</button>
+    <button class="f-btn" onclick="filterRecruit('etc',this)">기타</button>
+    <span style="margin-left:auto;padding:0 48px 0 0;font-family:'Space Mono',monospace;font-size:.46rem;color:var(--t3);align-self:center;letter-spacing:2px"><span id="recruit-count">0</span>개</span>
+  </div>
+  <div class="recruit-wrap">
     <div class="recruit-list" id="recruit-list"></div>
   </div>
 </div>
+
+<!-- ══ 스터디 방 ══ -->
+<div id="tab-study" style="display:none">
+  <div class="room-nav">
+    <button class="back-btn" onclick="goLanding()">← 돌아가기</button>
+    <span class="room-name">스터디</span>
+  </div>
+  <div class="study-wrap">
+    <!-- 타이머 -->
+    <div class="study-timer-section">
+      <div class="timer-label">오늘의 디자인 공부</div>
+      <div class="timer-display" id="timer-display">00:00:00</div>
+      <div class="timer-btns">
+        <button class="timer-btn start" id="timer-start-btn" onclick="timerStart()">시작</button>
+        <button class="timer-btn stop" id="timer-stop-btn" onclick="timerStop()" style="display:none">정지 · 저장</button>
+        <button class="timer-btn" onclick="timerReset()">초기화</button>
+      </div>
+    </div>
+
+    <!-- 목표 설정 -->
+    <div class="study-goal-section">
+      <div class="study-section-title">오늘 목표</div>
+      <div class="goal-row">
+        <input class="goal-input" id="goal-input" type="number" min="1" max="24" value="3" placeholder="3">
+        <span class="goal-unit">시간</span>
+        <button class="goal-btn" onclick="saveGoal()">저장</button>
+      </div>
+      <div class="goal-progress-bar"><div class="goal-progress-fill" id="goal-bar" style="width:0%"></div></div>
+      <div class="goal-progress-txt" id="goal-txt">목표를 설정하세요</div>
+    </div>
+
+    <div class="study-grid">
+      <!-- 주간 랭킹 -->
+      <div class="study-ranking">
+        <div class="study-section-title">이번 주 랭킹</div>
+        <div class="rank-list" id="rank-list">
+          <div style="font-family:'Space Mono',monospace;font-size:.48rem;color:var(--t3);letter-spacing:2px;padding:20px 0;text-align:center">불러오는 중...</div>
+        </div>
+      </div>
+
+      <!-- 친구 현황 -->
+      <div class="study-friends">
+        <div class="study-section-title">지금 공부 중</div>
+        <div class="friend-list" id="friend-list">
+          <div style="font-family:'Space Mono',monospace;font-size:.48rem;color:var(--t3);letter-spacing:2px;padding:20px 0;text-align:center">불러오는 중...</div>
+        </div>
+      </div>
+
+      <!-- 오늘 기록 -->
+      <div class="study-today">
+        <div class="study-section-title">오늘 기록</div>
+        <div class="today-logs" id="today-logs">
+          <div class="no-logs">아직 기록이 없어요</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div><!-- /app -->
 
 <!-- ══ POST MODAL ══ -->
@@ -137,18 +387,18 @@
     <div class="modal-header">
       <h3 id="m-title-nav">작업</h3>
       <div class="modal-header-actions">
-        <span class="post-version-badge" id="m-version"></span>
-        <button class="icon-btn" id="m-edit-btn" onclick="openEditModal()">✎</button>
-        <button class="icon-btn danger" id="m-delete-btn" onclick="deletePost()">🗑</button>
+        <span class="post-ver-badge" id="m-version"></span>
+        <button class="ic-btn" id="m-edit-btn" onclick="openEditModal()">✎</button>
+        <button class="ic-btn danger" id="m-delete-btn" onclick="deletePost()">🗑</button>
         <button class="close-btn" onclick="closeModal()">✕</button>
       </div>
     </div>
     <div class="modal-body">
       <div class="modal-img-side">
         <img id="m-img" src="" alt="">
-        <div class="keyword-section">
-          <div class="keyword-label">빠른 반응</div>
-          <div class="keyword-tags" id="keyword-tags">
+        <div class="kw-section">
+          <div class="kw-label">빠른 반응</div>
+          <div class="kw-tags" id="keyword-tags">
             <button class="kw-tag" onclick="toggleKeyword(this,'형식 좋아요')">형식 좋아요</button>
             <button class="kw-tag" onclick="toggleKeyword(this,'더 실험적으로')">더 실험적으로</button>
             <button class="kw-tag" onclick="toggleKeyword(this,'색이 강해요')">색이 강해요</button>
@@ -167,8 +417,8 @@
           <div class="badge-row" id="m-badges"></div>
         </div>
         <div class="comments-wrap">
-          <div class="comments-list" id="c-list"></div>
-          <div class="comment-input-wrap">
+          <div class="c-list" id="c-list"></div>
+          <div class="c-input-wrap">
             <div class="type-row">
               <button class="type-chip" data-t="visual" onclick="pickType(this)">시각</button>
               <button class="type-chip" data-t="idea" onclick="pickType(this)">아이디어</button>
@@ -188,21 +438,14 @@
 <!-- ══ UPLOAD MODAL ══ -->
 <div class="upload-bg" id="upload-modal">
   <div class="upload-modal">
-    <div class="upload-header">
-      <h3>작업 올리기</h3>
-      <button class="close-btn" onclick="closeUpload()">✕</button>
-    </div>
+    <div class="upload-hdr"><h3>작업 올리기</h3><button class="close-btn" onclick="closeUpload()">✕</button></div>
     <div id="locked-view" style="display:none">
       <div class="locked-view">
         <div class="locked-title">LOCKED</div>
-        <div class="locked-desc">작업을 올리려면<br>피드백을 3번 남겨야 해요.</div>
-        <div class="locked-pips">
-          <div class="locked-pip" id="lp0"></div>
-          <div class="locked-pip" id="lp1"></div>
-          <div class="locked-pip" id="lp2"></div>
-        </div>
+        <div class="locked-desc">피드백 3회 남기면<br>업로드 가능해요</div>
+        <div class="locked-pips"><div class="locked-pip" id="lp0"></div><div class="locked-pip" id="lp1"></div><div class="locked-pip" id="lp2"></div></div>
         <div class="locked-sub" id="locked-sub">0 / 3</div>
-        <button class="back-btn" onclick="closeUpload()">돌아가서 피드백 남기기</button>
+        <button class="back-btn-ul" onclick="closeUpload()">돌아가서 피드백 남기기</button>
       </div>
     </div>
     <div id="open-view">
@@ -211,20 +454,17 @@
           <label class="f-label">이미지 <span class="f-hint">(필수)</span></label>
           <div class="drop-zone" onclick="document.getElementById('file-img').click()">
             <input type="file" id="file-img" accept="image/*" style="display:none" onchange="onFile(event)">
-            <span class="drop-label" id="drop-label">클릭해서 업로드</span>
-            <img class="drop-preview" id="preview-img" src="" alt="">
+            <span class="drop-lbl" id="drop-label">클릭해서 업로드</span>
+            <img class="drop-prev" id="preview-img" src="" alt="">
           </div>
         </div>
         <div>
           <label class="f-label">작업 제목</label>
-          <div style="display:flex;gap:8px;align-items:center">
+          <div style="display:flex;gap:7px;align-items:center">
             <input class="f-input" id="u-title" type="text" placeholder="ex. 브랜드 아이덴티티 리뉴얼" style="flex:1">
             <select class="f-select" id="u-version">
-              <option value="v1">v1</option>
-              <option value="v2">v2</option>
-              <option value="v3">v3</option>
-              <option value="WIP">WIP</option>
-              <option value="Final">Final</option>
+              <option value="v1">v1</option><option value="v2">v2</option><option value="v3">v3</option>
+              <option value="WIP">WIP</option><option value="Final">Final</option>
             </select>
           </div>
         </div>
@@ -249,26 +489,19 @@
 <!-- ══ EDIT MODAL ══ -->
 <div class="upload-bg" id="edit-modal">
   <div class="upload-modal">
-    <div class="upload-header">
-      <h3>작업 수정</h3>
-      <button class="close-btn" onclick="closeEditModal()">✕</button>
-    </div>
+    <div class="upload-hdr"><h3>작업 수정</h3><button class="close-btn" onclick="closeEditModal()">✕</button></div>
     <div class="upload-form">
       <div>
         <label class="f-label">작업 제목</label>
-        <div style="display:flex;gap:8px;align-items:center">
+        <div style="display:flex;gap:7px;align-items:center">
           <input class="f-input" id="e-title" type="text" style="flex:1">
           <select class="f-select" id="e-version">
-            <option value="v1">v1</option><option value="v2">v2</option>
-            <option value="v3">v3</option><option value="WIP">WIP</option>
-            <option value="Final">Final</option>
+            <option value="v1">v1</option><option value="v2">v2</option><option value="v3">v3</option>
+            <option value="WIP">WIP</option><option value="Final">Final</option>
           </select>
         </div>
       </div>
-      <div>
-        <label class="f-label">설명</label>
-        <textarea class="f-textarea" id="e-desc"></textarea>
-      </div>
+      <div><label class="f-label">설명</label><textarea class="f-textarea" id="e-desc"></textarea></div>
       <div>
         <label class="f-label">원하는 피드백</label>
         <div class="wanted-row" id="e-wanted-row">
@@ -282,51 +515,39 @@
   </div>
 </div>
 
-<!-- ══ RECRUIT UPLOAD MODAL ══ -->
+<!-- ══ RECRUIT UPLOAD ══ -->
 <div class="upload-bg" id="recruit-modal">
   <div class="upload-modal">
-    <div class="upload-header">
-      <h3>모집 글 올리기</h3>
-      <button class="close-btn" onclick="closeRecruitUpload()">✕</button>
-    </div>
+    <div class="upload-hdr"><h3>모집 글 올리기</h3><button class="close-btn" onclick="closeRecruitUpload()">✕</button></div>
     <div class="upload-form">
       <div>
         <label class="f-label">유형</label>
         <div class="wanted-row">
-          <button class="w-opt active-type" data-v="contest" onclick="pickRecruitType(this)">공모전</button>
+          <button class="w-opt" data-v="contest" onclick="pickRecruitType(this)">공모전</button>
           <button class="w-opt" data-v="project" onclick="pickRecruitType(this)">프로젝트</button>
           <button class="w-opt" data-v="study" onclick="pickRecruitType(this)">스터디</button>
           <button class="w-opt" data-v="etc" onclick="pickRecruitType(this)">기타</button>
         </div>
       </div>
-      <div>
-        <label class="f-label">제목</label>
-        <input class="f-input" id="r-title" type="text" placeholder="ex. 브랜딩 공모전 팀원 구해요">
-      </div>
-      <div>
-        <label class="f-label">내용</label>
-        <textarea class="f-textarea" id="r-desc" placeholder="모집 인원, 역할, 연락처 등 자유롭게..."></textarea>
-      </div>
-      <div>
-        <label class="f-label">모집 마감일 <span class="f-hint">(선택)</span></label>
-        <input class="f-input" id="r-deadline" type="date">
-      </div>
+      <div><label class="f-label">제목</label><input class="f-input" id="r-title" type="text" placeholder="ex. 브랜딩 공모전 팀원 구해요"></div>
+      <div><label class="f-label">내용</label><textarea class="f-textarea" id="r-desc" placeholder="모집 인원, 역할, 연락처 등..."></textarea></div>
+      <div><label class="f-label">마감일 <span class="f-hint">(선택)</span></label><input class="f-input" id="r-deadline" type="date"></div>
       <button class="submit-btn" onclick="doRecruitPost()">올리기</button>
     </div>
   </div>
 </div>
 
-<!-- ══ RECRUIT DETAIL MODAL ══ -->
+<!-- ══ RECRUIT DETAIL ══ -->
 <div class="modal-bg" id="recruit-detail-modal">
   <div class="modal recruit-detail">
     <div class="modal-header">
       <h3 id="rd-title-nav">모집</h3>
       <div class="modal-header-actions">
-        <button class="icon-btn danger" id="rd-delete-btn" onclick="deleteRecruit()">🗑</button>
+        <button class="ic-btn danger" id="rd-delete-btn" onclick="deleteRecruit()">🗑</button>
         <button class="close-btn" onclick="closeRecruitDetail()">✕</button>
       </div>
     </div>
-    <div class="recruit-detail-body">
+    <div class="rd-body">
       <div class="rd-meta">
         <span class="rd-type-badge" id="rd-type"></span>
         <span class="rd-author" id="rd-author"></span>
@@ -335,16 +556,12 @@
       </div>
       <div class="rd-title" id="rd-title"></div>
       <div class="rd-desc" id="rd-desc"></div>
-
-      <!-- 모집 댓글 -->
       <div class="rd-comments-wrap">
-        <div class="rd-comments-label">댓글</div>
-        <div class="rd-comments-list" id="rd-c-list"></div>
-        <div class="rd-input-wrap">
-          <div class="input-row">
-            <textarea class="c-input" id="rd-c-input" placeholder="댓글을 남겨요..."></textarea>
-            <button class="send-btn" onclick="sendRecruitComment()">전송</button>
-          </div>
+        <div class="rd-c-label">댓글</div>
+        <div class="rd-c-list" id="rd-c-list"></div>
+        <div class="input-row">
+          <textarea class="c-input" id="rd-c-input" placeholder="댓글을 남겨요..."></textarea>
+          <button class="send-btn" onclick="sendRecruitComment()">전송</button>
         </div>
       </div>
     </div>
@@ -352,6 +569,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
 <script src="app.js"></script>
 </body>
 </html>
