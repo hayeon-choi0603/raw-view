@@ -2380,3 +2380,180 @@ nav{display:flex;align-items:center;padding:0 48px;height:52px;border-bottom:1px
 .gm-reel-wrap{
   height:calc(100vh - 52px - 90px - 44px) !important;
 }
+
+/* ══ 일반인 릴스 — 버튼 우측 세로 + 반응버튼 낮춤 ══ */
+
+/* 이전 cta 버튼 완전 숨기기 */
+.gm-feedback-cta{ display:none !important }
+
+/* 하단 정보 — 버튼 없이 텍스트만 */
+.gm-reel-bottom{
+  position:absolute !important;
+  bottom:0 !important; left:0 !important; right:0 !important;
+  background:linear-gradient(transparent, rgba(0,0,0,.8) 50%, rgba(0,0,0,.95)) !important;
+  padding:60px 20px 18px !important;
+  pointer-events:none !important;
+}
+.gm-reel-meta{ pointer-events:none !important }
+.gm-reel-title-big{
+  font-family:'Syne',sans-serif !important;
+  font-size:clamp(1.2rem, 4vw, 1.6rem) !important;
+  font-weight:800 !important; color:#fff !important;
+  line-height:1.2 !important; letter-spacing:-.3px !important;
+}
+.gm-reel-fb-info{
+  font-family:'Syne',sans-serif !important;
+  font-size:.56rem !important;
+  color:rgba(255,255,255,.45) !important;
+  letter-spacing:1px !important;
+  margin-top:4px !important;
+}
+
+/* 우측 세로 액션 버튼 */
+.gm-side-actions{
+  position:absolute !important;
+  right:14px !important;
+  bottom:24px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:10px !important;
+  align-items:center !important;
+  z-index:10 !important;
+}
+.gm-side-btn{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  gap:4px !important;
+  background:rgba(0,0,0,.35) !important;
+  backdrop-filter:blur(8px) !important;
+  -webkit-backdrop-filter:blur(8px) !important;
+  border:1px solid rgba(255,255,255,.2) !important;
+  border-radius:14px !important;
+  padding:12px 10px !important;
+  cursor:pointer !important;
+  width:56px !important;
+  transition:background .15s, transform .12s !important;
+  -webkit-tap-highlight-color:transparent !important;
+}
+.gm-side-btn:hover{
+  background:rgba(0,0,0,.55) !important;
+}
+.gm-side-btn:active{
+  transform:scale(.92) !important;
+}
+.gm-side-icon{
+  font-size:1.5rem !important;
+  line-height:1 !important;
+}
+.gm-side-label{
+  font-family:'Syne',sans-serif !important;
+  font-size:.46rem !important;
+  font-weight:700 !important;
+  color:rgba(255,255,255,.85) !important;
+  letter-spacing:.5px !important;
+  white-space:nowrap !important;
+}
+
+/* 반응 버튼 영역 — 더 컴팩트하게 낮춤 */
+.gm-reel-actions{
+  height:72px !important;
+  padding:8px 12px 10px !important;
+  background:#fff !important;
+  border-top:1px solid rgba(0,0,0,.07) !important;
+  display:flex !important; align-items:center !important;
+}
+.gm-reel-btn-row{ gap:6px !important }
+.gm-reel-btn{
+  padding:8px 4px !important;
+  border-radius:12px !important;
+  min-height:52px !important;
+}
+.gm-reel-btn span{ font-size:1.5rem !important }
+.gm-reel-btn small{ font-size:.48rem !important }
+
+/* 릴스 wrap 높이 재조정 */
+.gm-reel-wrap{
+  height:calc(100vh - 52px - 72px - 44px) !important;
+  overflow-y:scroll !important;
+  scroll-snap-type:y mandatory !important;
+}
+.gm-reel-item{
+  height:calc(100vh - 52px - 72px - 44px) !important;
+  scroll-snap-align:start !important;
+  scroll-snap-stop:always !important;
+  position:relative !important;
+  overflow:hidden !important;
+  background:#111 !important;
+}
+
+/* ══ 우측 버튼 — 위로 이동 + 잘 보이게 ══ */
+.gm-side-actions{
+  position:absolute !important;
+  right:12px !important;
+  top:50% !important;
+  transform:translateY(-50%) !important;
+  bottom:auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:8px !important;
+  align-items:center !important;
+  z-index:10 !important;
+}
+.gm-side-btn{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:2px !important;
+  background:rgba(255,255,255,.18) !important;
+  backdrop-filter:blur(10px) !important;
+  -webkit-backdrop-filter:blur(10px) !important;
+  border:1.5px solid rgba(255,255,255,.45) !important;
+  border-radius:14px !important;
+  padding:14px 10px !important;
+  cursor:pointer !important;
+  width:64px !important;
+  transition:background .15s, transform .12s !important;
+  -webkit-tap-highlight-color:transparent !important;
+}
+.gm-side-btn:hover{
+  background:rgba(255,255,255,.32) !important;
+  border-color:rgba(255,255,255,.7) !important;
+}
+.gm-side-btn:active{ transform:scale(.92) !important }
+.gm-side-icon{ display:none !important }
+.gm-side-label{
+  font-family:'Syne',sans-serif !important;
+  font-size:.52rem !important;
+  font-weight:800 !important;
+  color:#fff !important;
+  letter-spacing:.3px !important;
+  white-space:nowrap !important;
+  line-height:1.4 !important;
+  text-align:center !important;
+}
+
+/* ══ 이모지 전체 제거 ══ */
+/* nav 로고, 뱃지, 버튼류 */
+.door-badge{ font-family:'Syne',sans-serif !important }
+
+/* 피드백 CTA 배너 — 이모지 없이 */
+.feed-cta-btn::before{ content:none !important }
+
+/* 타이머 버튼 */
+.timer-btn.stop::before{ content:none !important }
+
+/* 어드민 뱃지 */
+.nav-role-badge::before{ content:none !important }
+
+/* locked view */
+.locked-title{ font-size:2.2rem !important; letter-spacing:2px !important }
+
+/* gm-react-chip — 이모지 있는 상단 카운터는 일반인 반응이므로 유지 */
+
+/* 모달 ic-btn 이모지 → 텍스트로 */
+.ic-btn[onclick*="openEditModal"]::before{ content:'수정' !important; font-size:.5rem !important }
+.ic-btn[onclick*="deletePost"]::before{ content:'삭제' !important; font-size:.5rem !important }
+
+/* drop-zone 텍스트 */
