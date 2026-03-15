@@ -39,12 +39,12 @@ function gmOpenDetail(postId, e){
     <div style="font-family:'Syne',sans-serif;font-size:.82rem;color:#666;line-height:1.8;margin-bottom:20px;font-weight:400">${p.description||''}</div>
     <div style="font-family:'Syne',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:12px">한마디 남기기</div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="gm-detail-tags">
-      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">👁 눈에 띄어요</button>
-      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">🔥 강렬해요</button>
-      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">🤔 뭔지 모르겠어요</button>
-      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">✨ 감성 있어요</button>
-      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">😐 심심해요</button>
-      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">💡 아이디어 좋아요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">눈에 띄어요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">강렬해요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">뭔지 모르겠어요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">감성 있어요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">심심해요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">아이디어 좋아요</button>
     </div>
     <div style="display:flex;gap:8px;align-items:flex-end">
       <textarea id="gm-detail-input" placeholder="짧게 한마디... (선택 안 해도 괜찮아요)" style="flex:1;font-family:'Syne',sans-serif;font-size:.9rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);border-radius:12px;padding:13px 16px;resize:none;height:80px;outline:none;color:#111;line-height:1.6"></textarea>
@@ -85,7 +85,7 @@ async function gmDetailSend(postId){
   const p=posts.find(x=>x.id==postId);
   if(p){p.comment_count=(p.comment_count||0)+1;await sb.patch('posts',postId,{comment_count:p.comment_count})}
   gmCloseDetail();
-  toast('전달됐어요! 🙌');
+  toast('전달됐어요!');
   gmNice++;
   document.getElementById('gm-nice-count').textContent=gmNice;
   gmCheckTreat();
@@ -259,7 +259,7 @@ async function doSignup(){
   const id=crypto.randomUUID();
   const newUser=await sb.post('profiles',{id,username,password_hash:hash,role:signupRole});
   if(!newUser){errEl.textContent='가입 실패. 다시 시도해줘요';return}
-  cu={id,username,role:signupRole};saveL();resetPin('signup');enterApp();toast(`${username}님 환영해요!`);
+  cu={id,username,role:signupRole};saveL();resetPin('signup');enterApp();toast(`${username}님 환영해요.`);
 }
 async function simpleHash(str){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
 function doLogout(){cu=null;hasPosted=false;fbCount=0;saveL();updateNavAuth();goLanding();toast('로그아웃됐어요')}
@@ -392,7 +392,7 @@ function renderShorts(){
         <div class="fri-progress"><div class="fri-progress-fill" style="width:${pct}%"></div></div>
         ${p.version?`<span class="fri-ver">${p.version}</span>`:''}
         <div class="fri-type-line">${typeSegs}</div>
-        ${p.img?`<button class="fri-expand-btn" onclick="event.stopPropagation();openLightbox('${p.img}')">⤢ 크게보기</button>`:''}
+        ${p.img?`<button class="fri-expand-btn" onclick="event.stopPropagation();openLightbox('${p.img}')">크게보기</button>`:''}
       </div>
       <div class="fri-body">
         <div class="fri-tags">${tags}</div>
@@ -484,7 +484,7 @@ function renderComments(pid){
   list.innerHTML=cs.map(c=>{
     const t=TC[c.type]||TC.visual;
     const isMe=(cu&&c.user_id===cu.id)||isAdmin();
-    const del=isMe?`<button class="del-c" onclick="deleteComment(${pid},${c.id},event)">✕</button>`:'';
+    const del=isMe?`<button class="del-c" onclick="deleteComment(${pid},${c.id},event)">삭제</button>`:'';
     const displayName=c.is_anon?'익명':(isMe?cu.username+' (나)':(c.author||'익명'));
     const nameColor=c.is_anon?'var(--t3)':'var(--t2)';
     return`<div class="comment" style="border-left-color:${t.color}99">
@@ -548,7 +548,7 @@ async function sendComment(){
   const authorName=isAnon?'익명':cu.username;
   const newC=await sb.post('comments',{post_id:curPost,type:curType,text,author:authorName,user_id:cu.id,helpful:0,author_role:cu.role||'general',is_anon:isAnon});
   if(newC){if(!comments[curPost])comments[curPost]=[];comments[curPost].push({...newC,liked:false});p.comment_count=(p.comment_count||0)+1;await sb.patch('posts',curPost,{comment_count:p.comment_count})}
-  if(hasPosted&&fbCount<3){fbCount++;gateUpdate();if(fbCount===3)toast('피드백 3회 완료! 이제 업로드 가능해요 🎉');else toast(`피드백 등록 (${fbCount}/3)`)}
+  if(hasPosted&&fbCount<3){fbCount++;gateUpdate();if(fbCount===3)toast('피드백 3회 완료! 이제 업로드 가능해요.');else toast(`피드백 등록 (${fbCount}/3)`)}
   else toast('피드백이 등록됐어요');
   saveL();renderComments(curPost);renderShorts();
   document.getElementById('c-input').value='';curType=null;resetTypeChips();
@@ -613,7 +613,7 @@ async function doPost(){
   }catch(_e){finalImg=imgData}
   const newPost=await sb.post('posts',{title,description:desc||'작업을 봐주세요.',img:finalImg,version:ver,wanted,author:cu.username,user_id:cu.id,comment_count:0,keywords:{},author_role:cu.role||'general'});
   btn.textContent='올리기';btn.style.opacity='';
-  if(newPost&&newPost.id){posts.unshift(newPost);hasPosted=true;fbCount=0;saveL();gateUpdate();renderShorts();closeUpload();resetUploadForm();toast('작업이 올라갔어요 🔥')}
+  if(newPost&&newPost.id){posts.unshift(newPost);hasPosted=true;fbCount=0;saveL();gateUpdate();renderShorts();closeUpload();resetUploadForm();toast('작업이 올라갔어요!')}
   else toast('오류가 났어요. 다시 시도해줘요.');
 }
 function resetUploadForm(){
@@ -763,7 +763,7 @@ function closeRecruitDetail(){document.getElementById('recruit-detail-modal').cl
 function renderRComments(rid){
   const list=document.getElementById('rd-c-list');const cs=rComments[rid]||[];
   if(!cs.length){list.innerHTML='<div style="font-family:\'Space Mono\',monospace;font-size:.5rem;color:var(--t3);letter-spacing:2px">첫 댓글을 남겨봐요</div>';return}
-  list.innerHTML=cs.map(c=>{const isMe=(cu&&c.user_id===cu.id)||isAdmin();const del=isMe?`<button class="del-c" onclick="deleteRComment(${rid},${c.id},event)">✕</button>`:'';return`<div class="rd-comment"><div class="rd-c-hdr"><span class="rd-c-auth" style="display:none"></span>${del}</div><div class="rd-c-txt">${c.text}</div></div>`}).join('');
+  list.innerHTML=cs.map(c=>{const isMe=(cu&&c.user_id===cu.id)||isAdmin();const del=isMe?`<button class="del-c" onclick="deleteRComment(${rid},${c.id},event)">삭제</button>`:'';return`<div class="rd-comment"><div class="rd-c-hdr"><span class="rd-c-auth" style="display:none"></span>${del}</div><div class="rd-c-txt">${c.text}</div></div>`}).join('');
 }
 async function sendRecruitComment(){
   if(!requireLogin('댓글을 남기려면 로그인 해줘요!'))return;
@@ -1046,7 +1046,7 @@ function gmReact(type){
 
   // 반응 DB 저장 (로그인 없이도)
   (async()=>{
-    const reactionText={good:'👍 좋아요',bad:'😑 별로예요',fire:'🔥 강렬해요',wow:'😮 신기해요',confused:'🤔 잘 모르겠어요'}[type]||type;
+    const reactionText={good:'👍 좋아요',bad:'😑 별로예요',fire:'강렬해요',wow:'😮 신기해요',confused:'🤔 잘 모르겠어요'}[type]||type;
     const _au=cu?cu.username:'일반인';
     const _ui=cu?cu.id:'00000000-0000-0000-0000-000000000099';
     await sb.post('comments',{post_id:p.id,type:'visual',text:reactionText,author:_au,user_id:_ui,helpful:0,author_role:'general',is_anon:true});
@@ -1143,14 +1143,14 @@ function gmShowTreat(){
   const total=gmNice+gmBad+gmFire+gmWow+gmConfused;
   // 유형 분석
   let emoji,title,desc;
-  if(gmFire>=gmNice&&gmFire>=gmBad&&gmFire>=gmWow){emoji='🔥';title='당신은 강렬파!';desc='강렬하다는 반응을 많이 눌렀어요. 임팩트 있는 비주얼을 바로 알아보는 눈이 있어요.'}
-  else if(gmWow>gmNice&&gmWow>gmBad){emoji='😮';title='당신은 호기심파!';desc='신기하다는 반응이 많았어요. 새롭고 독특한 시도에 관심이 많은 타입이에요.'}
-  else if(gmConfused>gmNice){emoji='🤔';title='당신은 분석파!';desc='모르겠다는 반응이 많았어요. 작품을 깊이 생각하며 보는 신중한 타입이에요.'}
-  else if(gmNice>gmBad*2){emoji='✨';title='당신은 감각파!';desc='좋아요를 많이 눌렀어요. 시각적으로 끌리는 작업을 금방 알아보는 눈이 있어요.'}
-  else if(gmBad>gmNice){emoji='🎯';title='당신은 날카로운 눈!';desc='별로라는 반응이 많았어요. 기준이 높고 디테일을 잘 보는 타입이에요.'}
-  else{emoji='🌀';title='당신은 균형파!';desc='다양한 반응을 골고루 눌렀어요. 상황에 따라 다르게 보는 균형 잡힌 시각이에요.'}
+  if(gmFire>=gmNice&&gmFire>=gmBad&&gmFire>=gmWow){emoji='';title='당신은 강렬파!';desc='강렬하다는 반응을 많이 눌렀어요. 임팩트 있는 비주얼을 바로 알아보는 눈이 있어요.'}
+  else if(gmWow>gmNice&&gmWow>gmBad){emoji='';title='당신은 호기심파!';desc='신기하다는 반응이 많았어요. 새롭고 독특한 시도에 관심이 많은 타입이에요.'}
+  else if(gmConfused>gmNice){emoji='';title='당신은 분석파!';desc='모르겠다는 반응이 많았어요. 작품을 깊이 생각하며 보는 신중한 타입이에요.'}
+  else if(gmNice>gmBad*2){emoji='';title='당신은 감각파!';desc='좋아요를 많이 눌렀어요. 시각적으로 끌리는 작업을 금방 알아보는 눈이 있어요.'}
+  else if(gmBad>gmNice){emoji='';title='당신은 날카로운 눈!';desc='별로라는 반응이 많았어요. 기준이 높고 디테일을 잘 보는 타입이에요.'}
+  else{emoji='';title='당신은 균형파!';desc='다양한 반응을 골고루 눌렀어요. 상황에 따라 다르게 보는 균형 잡힌 시각이에요.'}
 
-  document.getElementById('gm-treat-emoji').textContent=emoji;
+  const tei=document.getElementById('gm-treat-emoji'); if(tei){tei.textContent=emoji;tei.style.display=emoji?'block':'none';}
   document.getElementById('gm-treat-title').textContent=title;
   document.getElementById('gm-treat-desc').textContent=desc+` 지금까지 ${total}개 작업을 봤어요.`;
   document.getElementById('gm-ts-nice').textContent=gmNice;
@@ -1245,16 +1245,22 @@ function gmRenderReel(){
       <div class="gm-reel-react-overlay" id="reel-overlay-${i}">
         <span class="gm-reel-react-emoji" id="reel-emoji-${i}"></span>
       </div>
-      <!-- 하단 그라데이션 정보 + 피드백 버튼 -->
+      <!-- 하단 정보 오버레이 -->
       <div class="gm-reel-bottom">
         <div class="gm-reel-meta">
           <div class="gm-reel-tags-row">${tags}</div>
           <div class="gm-reel-title-big">${p.title}</div>
-          <div class="gm-reel-fb-info">${p.comment_count||0}개의 크리틱</div>
+          <div class="gm-reel-fb-info">${p.comment_count||0}개의 반응</div>
         </div>
-        <button class="gm-feedback-cta" onclick="gmOpenDetail(${p.id},event)">
-          <span class="gm-feedback-cta-icon">✏️</span>
-          <span class="gm-feedback-cta-text">크리틱 남기기</span>
+      </div>
+      <!-- 우측 세로 액션 버튼 -->
+      <div class="gm-side-actions">
+        <button class="gm-side-btn" onclick="gmOpenDetail(${p.id},event)">
+          <span class="gm-side-label">상세보기</span>
+          <span class="gm-side-label">+피드백</span>
+        </button>
+        <button class="gm-side-btn gm-side-btn-zoom" onclick="openLightbox('${p.img||''}')">
+          <span class="gm-side-label">크게보기</span>
         </button>
       </div>
       <div class="gm-reel-num">${i+1} / ${posts.length}</div>
