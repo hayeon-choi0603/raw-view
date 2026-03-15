@@ -1231,26 +1231,31 @@ function gmRenderReel(){
   const TC2={visual:{label:'시각',color:'#d94f3d'},idea:{label:'아이디어',color:'#b8942a'},ux:{label:'경험',color:'#3f7a58'}};
 
   posts.forEach((p,i)=>{
-    const tags=(p.wanted||[]).map(w=>TC2[w]?`<span class="gm-reel-tag" style="border-color:${TC2[w].color}88;color:${TC2[w].color}">${TC2[w].label}</span>`:'').join('');
+    const tags=(p.wanted||[]).map(w=>TC2[w]?`<span class="gm-reel-tag" style="border-color:${TC2[w].color}aa;color:${TC2[w].color};background:rgba(0,0,0,.35);backdrop-filter:blur(4px)">${TC2[w].label}</span>`:'').join('');
     const item=document.createElement('div');
     item.className='gm-reel-item';
     item.dataset.idx=i;
     item.dataset.postid=p.id;
     item.innerHTML=`
       ${p.img
-        ? `<img class="gm-reel-img" src="${p.img}" alt="" onclick="gmOpenDetail(${p.id},event)">`
-        : `<div class="gm-reel-img-placeholder" onclick="gmOpenDetail(${p.id},event)"><span style="font-family:'Syne',sans-serif;font-size:.5rem;color:var(--t3);letter-spacing:3px">IMAGE</span></div>`
+        ? `<img class="gm-reel-img" src="${p.img}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">`
+        : `<div class="gm-reel-img-placeholder"><span style="font-family:'Syne',sans-serif;font-size:.5rem;color:rgba(255,255,255,.4);letter-spacing:3px">IMAGE</span></div>`
       }
+      <!-- 반응 이모지 오버레이 -->
       <div class="gm-reel-react-overlay" id="reel-overlay-${i}">
         <span class="gm-reel-react-emoji" id="reel-emoji-${i}"></span>
       </div>
-      <div class="gm-reel-info">
-        <div class="gm-reel-title">${p.title}</div>
-        <div class="gm-reel-tags">${tags}</div>
-        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
-          <span style="font-family:'Syne',sans-serif;font-size:.52rem;color:rgba(255,255,255,.55);letter-spacing:1px">${p.comment_count||0}개의 피드백</span>
-          <button class="gm-detail-btn" onclick="gmOpenDetail(${p.id},event)">상세보기 +피드백</button>
+      <!-- 하단 그라데이션 정보 + 피드백 버튼 -->
+      <div class="gm-reel-bottom">
+        <div class="gm-reel-meta">
+          <div class="gm-reel-tags-row">${tags}</div>
+          <div class="gm-reel-title-big">${p.title}</div>
+          <div class="gm-reel-fb-info">${p.comment_count||0}개의 크리틱</div>
         </div>
+        <button class="gm-feedback-cta" onclick="gmOpenDetail(${p.id},event)">
+          <span class="gm-feedback-cta-icon">✏️</span>
+          <span class="gm-feedback-cta-text">크리틱 남기기</span>
+        </button>
       </div>
       <div class="gm-reel-num">${i+1} / ${posts.length}</div>
     `;
