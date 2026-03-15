@@ -1,4 +1,97 @@
 
+// ══ 일반인 상세보기 + 피드백 ══
+function gmOpenDetail(postId, e){
+  if(e) e.stopPropagation();
+  const p=posts.find(x=>x.id==postId);
+  if(!p)return;
+
+  // 바텀시트 생성 또는 업데이트
+  let sheet=document.getElementById('gm-detail-sheet');
+  if(!sheet){
+    sheet=document.createElement('div');
+    sheet.id='gm-detail-sheet';
+    sheet.style.cssText=`
+      position:fixed;bottom:0;left:0;right:0;
+      background:#fff;border-radius:20px 20px 0 0;
+      z-index:3000;padding:20px 20px 32px;
+      box-shadow:0 -8px 40px rgba(0,0,0,.15);
+      max-height:80vh;overflow-y:auto;
+      transform:translateY(100%);
+      transition:transform .3s cubic-bezier(.16,1,.3,1);
+    `;
+    document.body.appendChild(sheet);
+    // 배경 클릭으로 닫기
+    const bg=document.createElement('div');
+    bg.id='gm-detail-bg';
+    bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2999;display:none;';
+    bg.onclick=gmCloseDetail;
+    document.body.appendChild(bg);
+  }
+
+  const TC2={visual:{label:'시각',color:'#d94f3d'},idea:{label:'아이디어',color:'#b8942a'},ux:{label:'경험',color:'#3f7a58'}};
+  const tags=(p.wanted||[]).map(w=>TC2[w]?`<span style="font-family:'Syne',sans-serif;font-size:.52rem;font-weight:600;border:1px solid ${TC2[w].color}88;color:${TC2[w].color};padding:3px 9px;border-radius:12px">${TC2[w].label}</span>`:'').join('');
+
+  sheet.innerHTML=`
+    <div style="width:36px;height:4px;background:rgba(0,0,0,.15);border-radius:4px;margin:0 auto 20px;cursor:pointer" onclick="gmCloseDetail()"></div>
+    ${p.img?`<img src="${p.img}" style="width:100%;border-radius:12px;max-height:240px;object-fit:cover;margin-bottom:16px;cursor:zoom-in" onclick="openLightbox('${p.img}')">`:''}
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">${tags}</div>
+    <div style="font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:#111;letter-spacing:-.3px;margin-bottom:8px">${p.title}</div>
+    <div style="font-family:'Syne',sans-serif;font-size:.82rem;color:#666;line-height:1.8;margin-bottom:20px;font-weight:400">${p.description||''}</div>
+    <div style="font-family:'Syne',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:12px">한마디 남기기</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="gm-detail-tags">
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">👁 눈에 띄어요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">🔥 강렬해요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">🤔 뭔지 모르겠어요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">✨ 감성 있어요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">😐 심심해요</button>
+      <button onclick="gmDetailTag(this)" style="font-family:'Syne',sans-serif;font-size:.58rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);color:#555;padding:7px 14px;border-radius:20px;cursor:pointer;font-weight:500">💡 아이디어 좋아요</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <textarea id="gm-detail-input" placeholder="짧게 한마디... (선택 안 해도 괜찮아요)" style="flex:1;font-family:'Syne',sans-serif;font-size:.9rem;background:#f5f5f5;border:1px solid rgba(0,0,0,.1);border-radius:12px;padding:13px 16px;resize:none;height:80px;outline:none;color:#111;line-height:1.6"></textarea>
+      <button onclick="gmDetailSend(${p.id})" style="background:#111;color:#fff;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;padding:0 18px;height:52px;cursor:pointer;letter-spacing:1px;flex-shrink:0">전달 →</button>
+    </div>
+  `;
+
+  document.getElementById('gm-detail-bg').style.display='block';
+  requestAnimationFrame(()=>{ sheet.style.transform='translateY(0)'; });
+}
+
+function gmCloseDetail(){
+  const sheet=document.getElementById('gm-detail-sheet');
+  const bg=document.getElementById('gm-detail-bg');
+  if(sheet) sheet.style.transform='translateY(100%)';
+  if(bg) bg.style.display='none';
+}
+
+let gmDetailSelectedTags=[];
+function gmDetailTag(btn){
+  const on=btn.style.background==='rgb(17, 17, 17)';
+  if(on){
+    btn.style.background='#f5f5f5';btn.style.color='#555';btn.style.borderColor='rgba(0,0,0,.1)';
+  }else{
+    btn.style.background='#111';btn.style.color='#fff';btn.style.borderColor='#111';
+  }
+}
+
+async function gmDetailSend(postId){
+  const input=document.getElementById('gm-detail-input');
+  const selectedTags=[...document.querySelectorAll('#gm-detail-tags button')].filter(b=>b.style.background==='rgb(17, 17, 17)').map(b=>b.textContent);
+  const text=input?.value?.trim()||'';
+  const combined=[...selectedTags,text].filter(Boolean).join(' · ');
+  if(!combined){toast('내용을 입력하거나 선택해줘요');return}
+  const _author=cu?cu.username:'일반인';
+  const _uid=cu?cu.id:'00000000-0000-0000-0000-000000000099';
+  await sb.post('comments',{post_id:postId,type:'visual',text:combined,author:_author,user_id:_uid,helpful:0,author_role:'general',is_anon:true});
+  const p=posts.find(x=>x.id==postId);
+  if(p){p.comment_count=(p.comment_count||0)+1;await sb.patch('posts',postId,{comment_count:p.comment_count})}
+  gmCloseDetail();
+  toast('전달됐어요! 🙌');
+  gmNice++;
+  document.getElementById('gm-nice-count').textContent=gmNice;
+  gmCheckTreat();
+}
+
+
 // ══ 팀모집 검색 + 해시태그 ══
 let recruitSearchQuery = '';
 let recruitHashtag = 'all';
@@ -951,6 +1044,16 @@ function gmReact(type){
 
   gmPendingType=type; gmPendingPostId=p.id;
 
+  // 반응 DB 저장 (로그인 없이도)
+  (async()=>{
+    const reactionText={good:'👍 좋아요',bad:'😑 별로예요',fire:'🔥 강렬해요',wow:'😮 신기해요',confused:'🤔 잘 모르겠어요'}[type]||type;
+    const _au=cu?cu.username:'일반인';
+    const _ui=cu?cu.id:'00000000-0000-0000-0000-000000000099';
+    await sb.post('comments',{post_id:p.id,type:'visual',text:reactionText,author:_au,user_id:_ui,helpful:0,author_role:'general',is_anon:true});
+    const _p=posts.find(x=>x.id==p.id);
+    if(_p){_p.comment_count=(_p.comment_count||0)+1;await sb.patch('posts',p.id,{comment_count:_p.comment_count});}
+  })();
+
   // 이모지 오버레이 표시
   const emojis={good:'👍',bad:'😑',fire:'🔥',wow:'😮',confused:'🤔'};
   const overlay=document.getElementById(`reel-overlay-${gmIndex}`);
@@ -1010,14 +1113,16 @@ async function gmCommentSend(){
   const text=document.getElementById('gm-comment-input').value.trim();
   const tags=gmSelectedCtags;
   document.getElementById('gm-comment-popup').classList.remove('open');
-  // 실제 저장 — 태그 + 텍스트 합쳐서
+  // 실제 저장 — 로그인 없이도 저장
   if(gmPendingPostId&&(text||tags.length)){
     const fullText=[...tags, text].filter(Boolean).join(' · ');
-    await sb.post('comments',{
+    const authorName=cu?cu.username:'일반인';
+    const userId=cu?cu.id:'00000000-0000-0000-0000-000000000099';
+    const savedC=await sb.post('comments',{
       post_id:gmPendingPostId, type:'visual',
-      text:fullText, author:'일반인',
-      user_id:'00000000-0000-0000-0000-000000000099',
-      helpful:0, author_role:'general'
+      text:fullText, author:authorName,
+      user_id:userId,
+      helpful:0, author_role:'general', is_anon:true
     });
     // 피드백 카운트 업데이트
     const p=posts.find(x=>x.id===gmPendingPostId);
@@ -1130,10 +1235,11 @@ function gmRenderReel(){
     const item=document.createElement('div');
     item.className='gm-reel-item';
     item.dataset.idx=i;
+    item.dataset.postid=p.id;
     item.innerHTML=`
       ${p.img
-        ? `<img class="gm-reel-img" src="${p.img}" alt="">`
-        : `<div class="gm-reel-img-placeholder"><span style="font-family:'Syne',sans-serif;font-size:.5rem;color:var(--t3);letter-spacing:3px">IMAGE</span></div>`
+        ? `<img class="gm-reel-img" src="${p.img}" alt="" onclick="gmOpenDetail(${p.id},event)">`
+        : `<div class="gm-reel-img-placeholder" onclick="gmOpenDetail(${p.id},event)"><span style="font-family:'Syne',sans-serif;font-size:.5rem;color:var(--t3);letter-spacing:3px">IMAGE</span></div>`
       }
       <div class="gm-reel-react-overlay" id="reel-overlay-${i}">
         <span class="gm-reel-react-emoji" id="reel-emoji-${i}"></span>
@@ -1141,6 +1247,10 @@ function gmRenderReel(){
       <div class="gm-reel-info">
         <div class="gm-reel-title">${p.title}</div>
         <div class="gm-reel-tags">${tags}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+          <span style="font-family:'Syne',sans-serif;font-size:.52rem;color:rgba(255,255,255,.55);letter-spacing:1px">${p.comment_count||0}개의 피드백</span>
+          <button class="gm-detail-btn" onclick="gmOpenDetail(${p.id},event)">상세보기 +피드백</button>
+        </div>
       </div>
       <div class="gm-reel-num">${i+1} / ${posts.length}</div>
     `;
