@@ -2222,3 +2222,161 @@ nav{display:flex;align-items:center;padding:0 48px;height:52px;border-bottom:1px
   .feed-cta-title{ font-size:1rem !important }
   .feed-cta-btn{ padding:12px 20px !important }
 }
+
+/* ══ 일반인 릴스 — 완전 새 구조 ══ */
+
+/* 릴스 아이템 — 풀스크린 */
+.gm-reel-item{
+  scroll-snap-align:start !important;
+  scroll-snap-stop:always !important;
+  height:calc(100vh - 52px - 90px) !important;
+  position:relative !important;
+  overflow:hidden !important;
+  background:#111 !important;
+  cursor:default !important;
+}
+.gm-reel-img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  display:block !important;
+}
+
+/* 하단 그라데이션 오버레이 */
+.gm-reel-bottom{
+  position:absolute !important;
+  bottom:0 !important; left:0 !important; right:0 !important;
+  background:linear-gradient(transparent, rgba(0,0,0,.75) 40%, rgba(0,0,0,.95)) !important;
+  padding:48px 20px 20px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:14px !important;
+}
+.gm-reel-meta{ display:flex; flex-direction:column; gap:6px; }
+.gm-reel-tags-row{ display:flex; gap:6px; flex-wrap:wrap; }
+.gm-reel-tag{
+  font-family:'Syne',sans-serif !important;
+  font-size:.56rem !important;
+  font-weight:700 !important;
+  padding:4px 11px !important;
+  border-radius:20px !important;
+  border:1px solid !important;
+  letter-spacing:.5px !important;
+  text-transform:uppercase !important;
+}
+.gm-reel-title-big{
+  font-family:'Syne',sans-serif !important;
+  font-size:clamp(1.3rem, 4vw, 1.7rem) !important;
+  font-weight:800 !important;
+  color:#fff !important;
+  line-height:1.2 !important;
+  letter-spacing:-.3px !important;
+}
+.gm-reel-fb-info{
+  font-family:'Syne',sans-serif !important;
+  font-size:.58rem !important;
+  color:rgba(255,255,255,.5) !important;
+  letter-spacing:1px !important;
+}
+
+/* ✏️ 크리틱 남기기 버튼 — 크고 눈에 띄게 */
+.gm-feedback-cta{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:10px !important;
+  width:100% !important;
+  background:#fff !important;
+  border:none !important;
+  border-radius:16px !important;
+  padding:17px 20px !important;
+  cursor:pointer !important;
+  transition:background .15s, transform .12s !important;
+  -webkit-tap-highlight-color:transparent !important;
+}
+.gm-feedback-cta:hover{ background:#f0f0f0 !important }
+.gm-feedback-cta:active{ transform:scale(.97) !important }
+.gm-feedback-cta-icon{ font-size:1.3rem !important; line-height:1 !important }
+.gm-feedback-cta-text{
+  font-family:'Syne',sans-serif !important;
+  font-size:.88rem !important;
+  font-weight:800 !important;
+  color:#111 !important;
+  letter-spacing:.3px !important;
+}
+
+/* 반응 버튼 영역 — 높이 90px */
+.gm-reel-actions{
+  height:90px !important;
+  padding:10px 16px 12px !important;
+  background:#fff !important;
+  border-top:1px solid rgba(0,0,0,.07) !important;
+  display:flex !important;
+  align-items:center !important;
+}
+.gm-reel-btn-row{
+  display:flex !important;
+  gap:8px !important;
+  width:100% !important;
+}
+.gm-reel-btn{
+  flex:1 !important;
+  border-radius:14px !important;
+  padding:12px 6px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  gap:3px !important;
+  cursor:pointer !important;
+  border:1px solid rgba(0,0,0,.08) !important;
+  transition:transform .12s, background .12s !important;
+  -webkit-tap-highlight-color:transparent !important;
+}
+.gm-reel-btn:active{ transform:scale(.93) !important }
+.gm-reel-btn span{ font-size:1.6rem !important; line-height:1 !important }
+.gm-reel-btn small{
+  font-family:'Syne',sans-serif !important;
+  font-size:.52rem !important;
+  font-weight:700 !important;
+  letter-spacing:.3px !important;
+}
+.gm-reel-btn.confused{ background:#f5f5f5 !important }
+.gm-reel-btn.bad{ background:rgba(217,79,61,.07) !important }
+.gm-reel-btn.good{ background:rgba(64,208,128,.1) !important }
+.gm-reel-btn.fire{ background:rgba(255,144,0,.1) !important }
+.gm-reel-btn.wow{ background:rgba(130,80,255,.07) !important }
+
+/* 진행 번호 */
+.gm-reel-num{
+  position:absolute !important;
+  top:14px !important; right:16px !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:.52rem !important;
+  color:rgba(255,255,255,.6) !important;
+  background:rgba(0,0,0,.3) !important;
+  backdrop-filter:blur(4px) !important;
+  padding:3px 10px !important;
+  border-radius:10px !important;
+  letter-spacing:1px !important;
+}
+
+/* 상단 카운터 */
+.gm-reaction-bar{
+  padding:6px 20px 0 !important;
+  gap:10px !important;
+}
+.gm-react-chip{
+  font-family:'Syne',sans-serif !important;
+  font-size:.56rem !important;
+  font-weight:600 !important;
+  background:#f5f5f5 !important;
+  border-radius:20px !important;
+  padding:5px 12px !important;
+  color:#555 !important;
+  gap:6px !important;
+}
+
+/* 릴스 wrap 높이 재조정 */
+.gm-reel-wrap{
+  height:calc(100vh - 52px - 90px - 44px) !important;
+}
