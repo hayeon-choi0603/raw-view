@@ -1474,3 +1474,751 @@ nav{display:flex;align-items:center;padding:0 48px;height:52px;border-bottom:1px
 .friend-name{font-size:.88rem !important;font-weight:600 !important}
 .friend-status{font-size:.56rem !important}
 .friend-avatar{font-size:.58rem !important}
+
+/* ══ 화살표 — 오른쪽 상단 고정 (겹침 완전 해결) ══ */
+.door{position:relative !important}
+.door-arrow{
+  position:absolute !important;
+  top:18px !important; right:18px !important;
+  left:auto !important;
+  font-size:1.1rem !important;
+  color:rgba(0,0,0,.25) !important;
+  transition:transform .18s, color .18s !important;
+  pointer-events:none !important;
+}
+.door:hover .door-arrow{
+  transform:translate(3px,-3px) !important;
+  color:rgba(0,0,0,.5) !important;
+}
+/* 숫자는 좌하단 */
+.door-bignum{
+  position:absolute !important;
+  bottom:12px !important; right:16px !important;
+  font-size:clamp(3rem,6vw,5rem) !important;
+  opacity:.08 !important;
+  pointer-events:none !important;
+}
+/* 텍스트는 좌하단 영역 */
+.door-tag{ margin-bottom:8px !important }
+.door-title{ margin-bottom:4px !important }
+
+/* ══ 디자이너 피드백 모달 — 획기적 개선 ══ */
+.modal{
+  border-radius:20px !important;
+  border:none !important;
+  box-shadow:0 20px 60px rgba(0,0,0,.18) !important;
+  overflow:hidden !important;
+  max-height:94vh !important;
+}
+.modal-header{
+  padding:16px 20px !important;
+  background:#fff !important;
+  border-bottom:1px solid rgba(0,0,0,.06) !important;
+}
+.modal-header h3{
+  font-family:'Syne',sans-serif !important;
+  font-size:.95rem !important;
+  font-weight:700 !important;
+  color:#111 !important;
+  letter-spacing:-.2px !important;
+  text-transform:none !important;
+}
+.post-ver-badge{
+  font-family:'Syne',sans-serif !important;
+  font-size:.52rem !important;
+  font-weight:700 !important;
+  background:#f5f5f5 !important;
+  color:#555 !important;
+  border:none !important;
+  padding:3px 10px !important;
+  border-radius:6px !important;
+}
+/* 이미지 사이드 */
+.modal-img-side{background:#f9f9f9 !important}
+.modal-img-side>img{object-fit:cover !important}
+
+/* 빠른 반응 태그 */
+.kw-section{
+  background:#fff !important;
+  padding:12px 16px !important;
+  border-top:1px solid rgba(0,0,0,.06) !important;
+}
+.kw-label{
+  font-family:'Syne',sans-serif !important;
+  font-size:.52rem !important;
+  font-weight:700 !important;
+  color:#aaa !important;
+  letter-spacing:2px !important;
+  text-transform:uppercase !important;
+  margin-bottom:8px !important;
+}
+.kw-tags{display:flex !important;gap:6px !important;flex-wrap:wrap !important}
+.kw-tag{
+  font-family:'Syne',sans-serif !important;
+  font-size:.6rem !important;
+  font-weight:500 !important;
+  background:#f5f5f5 !important;
+  border:1px solid rgba(0,0,0,.08) !important;
+  color:#555 !important;
+  padding:5px 13px !important;
+  border-radius:20px !important;
+  cursor:pointer !important;
+  transition:all .12s !important;
+}
+.kw-tag:hover{background:#eee !important;color:#111 !important}
+.kw-tag.active{background:#111 !important;color:#fff !important;border-color:#111 !important}
+
+/* 작업 설명 */
+.modal-info{
+  padding:16px 20px 12px !important;
+  border-bottom:1px solid rgba(0,0,0,.06) !important;
+  background:#fff !important;
+}
+.modal-title{
+  font-family:'Syne',sans-serif !important;
+  font-size:1.05rem !important;
+  font-weight:800 !important;
+  color:#111 !important;
+  margin-bottom:6px !important;
+  letter-spacing:-.3px !important;
+  line-height:1.3 !important;
+}
+.modal-desc{
+  font-size:.82rem !important;
+  color:#777 !important;
+  line-height:1.8 !important;
+  margin-bottom:10px !important;
+  font-weight:400 !important;
+}
+.badge{
+  font-family:'Syne',sans-serif !important;
+  font-size:.5rem !important;
+  font-weight:600 !important;
+  padding:3px 10px !important;
+  border-radius:12px !important;
+  letter-spacing:1px !important;
+}
+
+/* 댓글 영역 */
+.c-list{
+  padding:12px 16px !important;
+  gap:10px !important;
+  background:#f9f9f9 !important;
+}
+.comment{
+  background:#fff !important;
+  border-radius:12px !important;
+  border:none !important;
+  border-left:3px solid !important;
+  padding:12px 14px !important;
+  box-shadow:0 1px 4px rgba(0,0,0,.06) !important;
+}
+.comment-type{
+  font-family:'Syne',sans-serif !important;
+  font-size:.54rem !important;
+  font-weight:800 !important;
+  letter-spacing:1px !important;
+  text-transform:uppercase !important;
+}
+.comment-txt{
+  font-size:.84rem !important;
+  color:#333 !important;
+  line-height:1.85 !important;
+  font-weight:400 !important;
+  margin-top:2px !important;
+}
+.helpful-btn{
+  font-family:'Syne',sans-serif !important;
+  font-size:.5rem !important;
+  background:#f5f5f5 !important;
+  border:none !important;
+  color:#888 !important;
+  padding:4px 10px !important;
+  border-radius:12px !important;
+  cursor:pointer !important;
+  transition:all .12s !important;
+}
+.helpful-btn:hover{background:#eee !important;color:#333 !important}
+.helpful-btn.on{background:#e8f5ed !important;color:#3f7a58 !important}
+
+/* 댓글 입력 */
+.c-input-wrap{
+  padding:12px 16px 14px !important;
+  background:#fff !important;
+  border-top:1px solid rgba(0,0,0,.06) !important;
+}
+/* 익명 토글 */
+.anon-toggle-row{margin-bottom:10px !important}
+.anon-btn{
+  border-radius:20px !important;
+  font-size:.56rem !important;
+  padding:6px 14px !important;
+  font-weight:600 !important;
+  background:#f5f5f5 !important;
+  border-color:rgba(0,0,0,.1) !important;
+}
+.anon-btn.on{background:#111 !important;color:#fff !important}
+.anon-hint{font-size:.5rem !important;color:#bbb !important}
+
+/* 타입 선택 */
+.type-row{gap:7px !important;margin-bottom:10px !important}
+.type-chip{
+  flex:1 !important;
+  border-radius:10px !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:.65rem !important;
+  font-weight:700 !important;
+  padding:10px !important;
+  background:#f5f5f5 !important;
+  border-color:rgba(0,0,0,.08) !important;
+  color:#777 !important;
+  letter-spacing:.5px !important;
+  transition:all .12s !important;
+}
+.type-chip:hover{background:#eee !important;color:#111 !important}
+/* 텍스트 입력 */
+.input-row{gap:8px !important}
+.c-input{
+  border-radius:10px !important;
+  font-size:.9rem !important;
+  padding:11px 14px !important;
+  background:#f5f5f5 !important;
+  border-color:rgba(0,0,0,.1) !important;
+  color:#111 !important;
+  height:44px !important;
+}
+.c-input:focus{border-color:rgba(0,0,0,.25) !important;background:#fff !important}
+.send-btn{
+  border-radius:10px !important;
+  font-size:.62rem !important;
+  font-weight:800 !important;
+  padding:0 18px !important;
+  background:#111 !important;
+  letter-spacing:1px !important;
+}
+.send-btn:hover{background:#333 !important}
+
+/* ══ 일반인 상세보기 버튼 ══ */
+.gm-detail-btn{
+  font-family:'Syne',sans-serif !important;
+  font-size:.54rem !important;
+  font-weight:700 !important;
+  background:rgba(255,255,255,.15) !important;
+  backdrop-filter:blur(4px) !important;
+  border:1px solid rgba(255,255,255,.3) !important;
+  color:#fff !important;
+  padding:5px 13px !important;
+  border-radius:20px !important;
+  cursor:pointer !important;
+  letter-spacing:.5px !important;
+  transition:all .15s !important;
+  flex-shrink:0 !important;
+}
+.gm-detail-btn:hover{
+  background:rgba(255,255,255,.28) !important;
+  border-color:rgba(255,255,255,.5) !important;
+}
+
+/* ══ 검정 배경 → 무조건 흰 글씨 전역 수정 ══ */
+
+/* 진입화면 일반인 카드 */
+.eg-card-general,
+.eg-card-general *{ color:#ffffff !important }
+.eg-card-general .eg-card-desc{ color:rgba(255,255,255,.55) !important }
+.eg-card-general .eg-card-label{ color:rgba(255,255,255,.35) !important }
+.eg-card-general .eg-card-arrow{ color:rgba(255,255,255,.3) !important }
+
+/* nav 우측 버튼 */
+.nav-btn{ color:#555 !important }
+.nav-btn:hover{ color:#111 !important }
+.nav-btn.danger:hover{ color:var(--red) !important }
+
+/* 검정 버튼들 — 전부 흰 글씨 */
+.btn-post{ background:#111 !important; color:#ffffff !important }
+.btn-post:hover{ background:#333 !important; color:#ffffff !important }
+.feed-cta-btn{ color:#000 !important } /* 초록 버튼은 검정 글씨 유지 */
+.fri-btn-crit{ background:#111 !important; color:#ffffff !important }
+.fri-btn-crit:hover{ background:#333 !important; color:#ffffff !important }
+.send-btn{ background:#111 !important; color:#ffffff !important }
+.send-btn:hover{ background:#333 !important; color:#ffffff !important }
+.submit-btn{ background:#111 !important; color:#ffffff !important }
+.submit-btn:hover{ background:#333 !important; color:#ffffff !important }
+.auth-btn{ background:#111 !important; color:#ffffff !important }
+.auth-btn:hover{ background:#333 !important; color:#ffffff !important }
+.back-btn-ul{ color:#555 !important }
+.pin-pad button{ background:#f5f5f5 !important; color:#111 !important }
+.timer-btn.start{ background:#111 !important; color:#ffffff !important }
+.timer-btn.start:hover{ background:#333 !important; color:#ffffff !important }
+
+/* 업로드 헤더 */
+.upload-hdr{ background:#fff !important }
+.upload-hdr h3{ color:#111 !important }
+.close-btn{ color:#555 !important }
+.close-btn:hover{ color:#111 !important }
+
+/* 모달 헤더 */
+.modal-header{ background:#fff !important }
+.modal-header h3{ color:#111 !important }
+.ic-btn{ background:#f5f5f5 !important; border-color:rgba(0,0,0,.1) !important; color:#555 !important }
+.ic-btn:hover{ color:#111 !important }
+.ic-btn.danger:hover{ color:var(--red) !important }
+
+/* 일반인 반응 버튼 dark 배경 없애기 */
+.gm-btn-bad{ background:#fff0ee !important; border-color:rgba(217,79,61,.2) !important }
+.gm-btn-good{ background:#e8f8f0 !important }
+.gm-btn-fire{ background:#fff4e5 !important }
+
+/* 팀모집 글씨 */
+.recruit-modal .upload-hdr h3{ color:#111 !important }
+
+/* 인증화면 */
+.auth-wrap{ background:#fff !important }
+.auth-tab{ color:#aaa !important }
+.auth-tab.active{ color:#111 !important; border-bottom-color:#111 !important }
+
+/* 방 네브 back 버튼 */
+.back-btn{ color:#888 !important }
+.back-btn:hover{ color:#111 !important }
+.room-name{ color:#111 !important }
+
+/* 피드백 방 CTA 배너 — 검정 배경 흰 글씨 */
+.feed-cta-banner{ background:#111 !important }
+.feed-cta-title{ color:#ffffff !important }
+.feed-cta-desc{ color:rgba(255,255,255,.55) !important }
+.feed-cta-gate .gate-pip{ background:rgba(255,255,255,.2) !important }
+.feed-cta-gate .gate-pip.on{ background:#3ddd7a !important }
+#gate-status{ color:#3ddd7a !important }
+
+/* 스터디 버튼 */
+.timer-btn{ color:#555 !important; border-color:rgba(0,0,0,.15) !important }
+.timer-btn.stop{ color:var(--red) !important }
+.goal-btn{ color:#555 !important }
+.goal-btn:hover{ color:#111 !important }
+
+/* 해시태그 */
+.recruit-hashtag{ color:#555 !important }
+.recruit-hashtag.on{ background:#111 !important; color:#ffffff !important; border-color:#111 !important }
+
+/* kw-tag active */
+.kw-tag.active{ background:#111 !important; color:#ffffff !important }
+.type-chip.selected{ color:#000 !important }
+
+/* w-opt on */
+.w-opt.on{ color:#000 !important }
+
+/* anon on */
+.anon-btn.on{ background:#111 !important; color:#ffffff !important }
+
+/* 일반인 바텀시트 전달 버튼 */
+#gm-detail-sheet button[onclick*="gmDetailSend"]{ color:#ffffff !important }
+
+/* locked view */
+.locked-title{ color:#111 !important }
+.locked-desc{ color:#555 !important }
+.locked-sub{ color:#aaa !important }
+
+/* 필터바 active */
+.f-btn.active{ color:#111 !important; border-bottom-color:#111 !important }
+.frt-btn.active-all{ color:#111 !important }
+.frt-btn.active-d{ color:var(--blue) !important }
+.frt-btn.active-g{ color:var(--green) !important }
+
+/* nav user / role badge */
+.nav-user{ color:#111 !important }
+.nav-role-badge.designer{ color:var(--blue) !important }
+.nav-role-badge.general{ color:var(--green) !important }
+
+/* 토스트 */
+.toast{ background:#111 !important; color:#ffffff !important }
+
+/* 일반인 바텀시트 내 전달 버튼 */
+.gm-detail-send-btn{ background:#111 !important; color:#ffffff !important }
+
+/* ══ 검정 배경 = 반드시 흰 글씨 ══ */
+
+/* 진입 카드 — 일반인 (검정) */
+.eg-card-general,
+.eg-card-general *{ color:#ffffff !important }
+.eg-card-general .eg-card-label{ color:rgba(255,255,255,.4) !important }
+.eg-card-general .eg-card-desc{ color:rgba(255,255,255,.55) !important }
+.eg-card-general .eg-card-arrow{ color:rgba(255,255,255,.25) !important }
+
+/* nav 로그인/가입 버튼 (검정 배경) */
+.nav-btn-dark{ color:#fff !important }
+
+/* CTA 배너 (검정) */
+.feed-cta-banner *{ color:#fff !important }
+.feed-cta-banner .feed-cta-desc{ color:rgba(255,255,255,.6) !important }
+.feed-cta-banner .feed-cta-gate .gate-pip{ background:rgba(255,255,255,.2) !important }
+.feed-cta-banner .feed-cta-gate .gate-pip.on{ background:#3ddd7a !important }
+.feed-cta-btn{ color:#000 !important } /* 초록 버튼은 검정 글씨 */
+
+/* 크리틱하기 버튼 (검정) */
+.fri-btn-crit{ color:#fff !important }
+
+/* 전송 버튼 (검정) */
+.send-btn{ color:#fff !important }
+.submit-btn{ color:#fff !important }
+.auth-btn{ color:#fff !important }
+
+/* 모집 글 올리기 버튼 */
+.btn-post{ color:#fff !important }
+
+/* 로그인/가입 버튼 */
+#btn-logout,#btn-login-nav{ color:#fff !important }
+
+/* pin-pad 0~9 버튼 — 흰 배경이니 검정 */
+.pin-pad button{ color:#111 !important }
+
+/* 작업 올리기 버튼 */
+.feed-cta-btn{ background:#3ddd7a !important; color:#000 !important }
+
+/* 스터디 시작 버튼 */
+.timer-btn.start{ background:#111 !important; color:#fff !important }
+.timer-btn.stop{ color:#d94f3d !important }
+.timer-btn{ color:#111 !important }
+
+/* 목표 저장 버튼 */
+.goal-btn{ color:#111 !important }
+
+/* 팀모집 모달 삭제 버튼 */
+.ic-btn.danger:hover{ color:#d94f3d !important }
+.ic-btn{ color:#555 !important }
+.close-btn{ color:#555 !important }
+.close-btn:hover{ color:#111 !important }
+
+/* 일반인 릴스 상세보기 버튼 */
+.gm-detail-btn{ color:#fff !important }
+
+/* 일반인 모드 배경 */
+#general-mode{ background:#fff !important; color:#111 !important }
+.gm-top .gm-back{ color:#888 !important }
+.gm-top .gm-title{ color:#111 !important }
+.gm-top .gm-progress{ color:#aaa !important }
+.gm-top .gm-home{ color:#555 !important }
+.gm-react-chip{ color:#555 !important }
+
+/* 피드백 댓글 삭제 버튼 */
+.del-c{ color:#bbb !important }
+.del-c:hover{ color:#d94f3d !important }
+
+/* 모달 내 모든 텍스트 */
+.modal-header h3{ color:#111 !important }
+.modal-title{ color:#111 !important }
+.modal-desc{ color:#777 !important }
+.comment-txt{ color:#333 !important }
+.comment-type{ color:inherit !important }
+
+/* upload 모달 */
+.upload-hdr h3{ color:#111 !important }
+.f-label{ color:#555 !important }
+
+/* 어드민 뱃지 */
+.nav-role-badge.designer{ background:rgba(58,110,168,.15) !important; color:#3a6ea8 !important }
+.nav-role-badge.general{ background:rgba(63,122,88,.15) !important; color:#3f7a58 !important }
+
+/* room-nav 뒤로 가기 */
+.back-btn{ color:#888 !important }
+.back-btn:hover{ color:#111 !important }
+.room-name{ color:#111 !important }
+
+/* filter bar */
+.f-btn{ color:#aaa !important }
+.f-btn.active{ color:#111 !important; border-bottom-color:#111 !important }
+.f-btn:hover{ color:#555 !important }
+
+/* 해시태그 */
+.recruit-hashtag{ color:#555 !important }
+.recruit-hashtag.on{ color:#fff !important; background:#111 !important }
+
+/* 검정 배경 요소들 내부 — 무조건 흰색 */
+[style*="background:#111"] *,
+[style*="background: #111"] *,
+[style*="background:#1a1a1a"] *,
+[style*="background: #1a1a1a"] *,
+[style*="background:#1f1f1f"] *,
+[style*="background: #1f1f1f"] * {
+  color: #fff !important;
+}
+/* 단, 초록 CTA 버튼은 예외 */
+.feed-cta-btn,
+.feed-cta-btn *{ color:#000 !important }
+
+/* ══ 검정 배경 → 흰 글씨 완전 강제 적용 ══ */
+
+/* 진입화면 일반인 카드 */
+.eg-card-general,
+.eg-card-general *,
+.eg-card-general .eg-card-title,
+.eg-card-general .eg-card-desc,
+.eg-card-general .eg-card-label,
+.eg-card-general .eg-card-arrow{color:#fff !important}
+.eg-card-general .eg-card-title{font-weight:800 !important}
+
+/* 피드백 CTA 배너 */
+.feed-cta-banner,
+.feed-cta-banner *{color:#fff !important}
+.feed-cta-title{color:#fff !important;font-weight:800 !important}
+.feed-cta-desc{color:rgba(255,255,255,.6) !important}
+.feed-cta-gate .gate-pip{background:rgba(255,255,255,.2) !important}
+.feed-cta-gate .gate-pip.on{background:#3ddd7a !important}
+
+/* 일반인 릴스 정보 오버레이 (이미지 위) */
+.gm-reel-info,
+.gm-reel-info *,
+.gm-reel-title,
+.gm-reel-tag{color:#fff !important}
+
+/* 핀 패드 — 검정 배경 없음, 밝게 */
+.pin-pad button{
+  background:#f5f5f5 !important;
+  color:#111 !important;
+  border-color:rgba(0,0,0,.1) !important;
+}
+.pin-pad button:hover{background:#eee !important}
+.pin-dot{
+  background:#f5f5f5 !important;
+  border-color:rgba(0,0,0,.15) !important;
+  color:#111 !important;
+}
+.pin-dot.filled{border-color:#111 !important}
+
+/* 어드민/역할 뱃지 */
+.nav-role-badge.designer{
+  background:rgba(58,110,168,.1) !important;
+  color:#3a6ea8 !important;
+}
+.nav-role-badge.general{
+  background:rgba(63,122,88,.1) !important;
+  color:#3f7a58 !important;
+}
+
+/* nav 버튼 */
+.nav-btn{
+  border-color:rgba(0,0,0,.15) !important;
+  color:#555 !important;
+}
+.nav-btn:hover{color:#111 !important;border-color:rgba(0,0,0,.3) !important}
+.nav-btn.danger:hover{color:#d94f3d !important;border-color:#d94f3d !important}
+
+/* room-nav 버튼 */
+.btn-post{background:#111 !important;color:#fff !important;font-weight:700 !important}
+.btn-post:hover{background:#333 !important}
+
+/* auth 화면 */
+#auth-screen{background:#fff !important}
+.auth-logo{color:#111 !important}
+.auth-tab{color:#aaa !important}
+.auth-tab.active{color:#111 !important;border-bottom-color:#111 !important}
+.auth-btn{background:#111 !important;color:#fff !important}
+.auth-btn:hover{background:#333 !important}
+.auth-input{background:#f5f5f5 !important;border-color:rgba(0,0,0,.12) !important;color:#111 !important}
+.auth-input::placeholder{color:#bbb !important}
+
+/* locked view */
+.locked-title{color:#111 !important}
+.locked-desc{color:#555 !important}
+.locked-sub{color:#888 !important}
+.locked-pip{background:#eee !important}
+.locked-pip.on{background:#111 !important}
+
+/* 스터디 버튼 */
+.timer-btn.start{background:#111 !important;color:#fff !important;border-color:#111 !important}
+.timer-btn.start:hover{background:#333 !important}
+.timer-btn.stop{border-color:#d94f3d !important;color:#d94f3d !important}
+.goal-btn{border-color:rgba(0,0,0,.15) !important;color:#555 !important}
+.goal-btn:hover{border-color:#111 !important;color:#111 !important}
+
+/* 모집 업로드 버튼 */
+.submit-btn{background:#111 !important;color:#fff !important}
+.submit-btn:hover{background:#333 !important}
+.w-opt{border-color:rgba(0,0,0,.15) !important;color:#555 !important}
+
+/* 일반인 반응버튼 텍스트 */
+.gm-reel-btn small{color:#555 !important}
+.gm-reel-btn.good small{color:#3f7a58 !important}
+.gm-reel-btn.fire small{color:#b8942a !important}
+.gm-reel-btn.bad small{color:#d94f3d !important}
+.gm-reel-btn.wow small{color:#8250ff !important}
+.gm-reel-btn.confused small{color:#888 !important}
+
+/* 모달 ic-btn */
+.ic-btn{background:none !important;border-color:rgba(0,0,0,.12) !important;color:#888 !important}
+.ic-btn:hover{border-color:rgba(0,0,0,.3) !important;color:#111 !important}
+.ic-btn.danger:hover{border-color:#d94f3d !important;color:#d94f3d !important}
+.close-btn{color:#aaa !important}
+.close-btn:hover{color:#111 !important}
+
+/* ══ 모바일 frt-btn 글씨 잘림 수정 ══ */
+.feed-role-tabs{
+  display:flex !important;
+  overflow-x:auto !important;
+  -webkit-overflow-scrolling:touch !important;
+  scrollbar-width:none !important;
+}
+.feed-role-tabs::-webkit-scrollbar{display:none !important}
+.frt-btn{
+  white-space:nowrap !important;
+  flex-shrink:0 !important;
+  font-size:.68rem !important;
+  padding:11px 14px !important;
+}
+
+/* ══ 상세 피드백 입력칸 크게 ══ */
+#gm-detail-sheet textarea{
+  height:80px !important;
+  font-size:.9rem !important;
+  padding:13px 16px !important;
+}
+#gm-detail-sheet .gm-detail-btn-row{
+  margin-top:4px !important;
+}
+/* 바텀시트 자체도 여유롭게 */
+#gm-detail-sheet{
+  padding:20px 20px 40px !important;
+}
+
+/* ══ 모바일 전체 검정 배경 있는 곳 흰 글씨 ══ */
+@media(max-width:768px){
+  .frt-btn{font-size:.62rem !important;padding:10px 12px !important}
+  .feed-cta-title{font-size:1rem !important}
+  .feed-cta-btn{font-size:.65rem !important;padding:10px 16px !important}
+}
+
+/* ══ 통계 칩 — 한 줄로 ══ */
+.eg-stat-chip{
+  white-space:nowrap !important;
+  font-size:.68rem !important;
+  padding:13px 18px !important;
+}
+.eg-stat-chip strong{
+  font-size:1.2rem !important;
+}
+
+/* ══ 전체/디자이너/일반인 탭 제거 ══ */
+.feed-role-tabs{ display:none !important; }
+.feed-top{ display:none !important; }
+
+/* ══ 버튼 전체 크게 ══ */
+/* 피드백 카드 버튼 */
+.fri-btn-skip{
+  font-size:.82rem !important;
+  padding:17px 0 !important;
+  border-radius:14px !important;
+  font-weight:600 !important;
+}
+.fri-btn-crit{
+  font-size:.88rem !important;
+  padding:17px 0 !important;
+  border-radius:14px !important;
+  font-weight:800 !important;
+  letter-spacing:.5px !important;
+}
+.fri-actions{
+  padding:14px 20px 24px !important;
+  gap:10px !important;
+}
+
+/* 일반인 반응버튼 크게 */
+.gm-reel-btn{
+  padding:14px 6px !important;
+  border-radius:14px !important;
+}
+.gm-reel-btn span{ font-size:1.8rem !important }
+.gm-reel-btn small{
+  font-size:.56rem !important;
+  font-weight:600 !important;
+  margin-top:2px !important;
+}
+.gm-reel-actions{
+  padding:10px 16px 20px !important;
+}
+
+/* 피드백 CTA 버튼 */
+.feed-cta-btn{
+  font-size:.78rem !important;
+  padding:14px 26px !important;
+  border-radius:12px !important;
+  font-weight:800 !important;
+}
+.feed-cta-title{ font-size:1.1rem !important }
+.feed-cta-desc{ font-size:.68rem !important }
+
+/* 모달 send 버튼 */
+.send-btn{
+  font-size:.7rem !important;
+  padding:0 20px !important;
+  height:48px !important;
+  border-radius:10px !important;
+}
+.c-input{ height:48px !important }
+
+/* 팀모집 버튼 */
+.btn-post{
+  font-size:.72rem !important;
+  padding:11px 20px !important;
+  border-radius:10px !important;
+  font-weight:800 !important;
+}
+
+/* nav 버튼 */
+.nav-btn{
+  font-size:.6rem !important;
+  padding:8px 16px !important;
+  border-radius:8px !important;
+}
+
+/* ══ 상세 피드백 바텀시트 — 엄지 위치(하단) 최적화 ══ */
+#gm-detail-sheet{
+  padding:16px 16px 48px !important;
+  border-radius:24px 24px 0 0 !important;
+  max-height:75vh !important;
+}
+/* 드래그 핸들 크게 */
+#gm-detail-sheet > div:first-child{
+  width:48px !important;
+  height:5px !important;
+  margin-bottom:16px !important;
+}
+/* 태그 버튼 크게 + 엄지 닿기 좋게 */
+#gm-detail-sheet button[onclick*="gmDetailTag"]{
+  font-size:.66rem !important;
+  padding:10px 16px !important;
+  min-height:40px !important;
+  border-radius:24px !important;
+}
+/* 입력창 + 전달버튼 행 */
+#gm-detail-sheet > div:last-child{
+  gap:10px !important;
+  position:sticky !important;
+  bottom:0 !important;
+  background:#fff !important;
+  padding-top:12px !important;
+}
+#gm-detail-input{
+  height:88px !important;
+  font-size:.92rem !important;
+  border-radius:14px !important;
+  padding:14px 16px !important;
+}
+#gm-detail-sheet [onclick*="gmDetailSend"]{
+  height:88px !important;
+  width:72px !important;
+  font-size:.7rem !important;
+  border-radius:14px !important;
+  flex-shrink:0 !important;
+}
+
+/* 이미지 최대 높이 줄이기 (바텀시트 안에서) */
+#gm-detail-sheet img{
+  max-height:160px !important;
+  border-radius:12px !important;
+}
+
+@media(max-width:768px){
+  .fri-btn-skip,.fri-btn-crit{ font-size:.88rem !important; padding:18px 0 !important }
+  .gm-reel-btn span{ font-size:2rem !important }
+  .gm-reel-btn small{ font-size:.58rem !important }
+  .feed-cta-title{ font-size:1rem !important }
+  .feed-cta-btn{ padding:12px 20px !important }
+}
