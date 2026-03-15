@@ -1,3 +1,71 @@
+
+// ══ 팀모집 검색 + 해시태그 ══
+let recruitSearchQuery = '';
+let recruitHashtag = 'all';
+
+function searchRecruit(q){
+  recruitSearchQuery = q.toLowerCase().trim();
+  renderFilteredRecruits();
+}
+
+function toggleHashtag(btn, tag){
+  document.querySelectorAll('.recruit-hashtag').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  recruitHashtag = tag;
+  renderFilteredRecruits();
+}
+
+function renderFilteredRecruits(){
+  let list = recruits;
+  // 해시태그 필터
+  if(recruitHashtag !== 'all') list = list.filter(r => r.type === recruitHashtag);
+  // 검색 필터
+  if(recruitSearchQuery){
+    list = list.filter(r =>
+      (r.title||'').toLowerCase().includes(recruitSearchQuery) ||
+      (r.description||'').toLowerCase().includes(recruitSearchQuery)
+    );
+  }
+  document.getElementById('recruit-count').textContent = list.length;
+  const el = document.getElementById('recruit-list');
+  if(!list.length){ el.innerHTML='<div class="r-empty">해당하는 모집 글이 없어요</div>'; return; }
+  const RT2 = {contest:{label:'공모전',color:'#d94f3d'},project:{label:'프로젝트',color:'#b8942a'},study:{label:'스터디',color:'#3f7a58'},etc:{label:'기타',color:'#666'}};
+  el.innerHTML = list.map(r => {
+    const t = RT2[r.type]||RT2.etc;
+    const hl = recruitSearchQuery
+      ? r.title.replace(new RegExp(recruitSearchQuery,'gi'), m=>`<mark style="background:#ffee58;border-radius:2px">${m}</mark>`)
+      : r.title;
+    return `<div class="r-card" onclick="openRecruitDetail(${r.id})">
+      <span class="r-badge" style="border-color:${t.color};color:${t.color}">${t.label}</span>
+      <div class="r-body">
+        <div class="r-title">${hl}</div>
+        <div class="r-desc">${r.description||''}</div>
+        <div class="r-meta">
+          <span class="r-author" style="display:none"></span>
+          <span class="r-time">${r.deadline?`마감 ${r.deadline}`:''}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+
+// ══ 이미지 라이트박스 ══
+function openLightbox(src){
+  const lb=document.getElementById('img-lightbox');
+  const img=document.getElementById('lightbox-img');
+  if(!lb||!img)return;
+  img.src=src;
+  lb.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  const lb=document.getElementById('img-lightbox');
+  if(lb) lb.classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeLightbox()});
+
 // ══ PIN ══
 const pinState={login:[],signup:[]};
 function pinInput(f,n){if(pinState[f].length>=4)return;pinState[f].push(n);updatePinUI(f)}
@@ -44,7 +112,7 @@ let signupRole=null;
 function saveL(){LS.save('user',cu);LS.save('hp',hasPosted);LS.save('fbc',fbCount)}
 
 let posts=[],comments={},recruits=[],rComments={};
-let curPost=null,curType=null,cf='all',curRoleFilter='all';
+let curPost=null,curType=null,cf='all',curRoleFilter='all',isAnon=false;
 let curRecruit=null,crf='all',imgData=null,rType='contest';
 
 function ts(t){if(!t)return'방금';return new Date(t).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}
@@ -163,14 +231,19 @@ function switchTab(tab){if(tab==='feed')enterFeedback();else if(tab==='recruit')
 // ══ GATE ══
 function gateUpdate(){
   const locked=hasPosted&&fbCount<3;
-  for(let i=0;i<3;i++)document.getElementById('p'+i).classList.toggle('on',hasPosted&&i<fbCount);
-  const badge=document.getElementById('gate-badge');
-  if(locked){badge.textContent=fbCount+'/3';badge.style.display='flex'}else badge.style.display='none';
+  for(let i=0;i<3;i++){const el=document.getElementById('p'+i);if(el)el.classList.toggle('on',hasPosted&&i<fbCount)}
   const lbl=document.getElementById('gate-label');
   const status=document.getElementById('gate-status');
-  if(!hasPosted){lbl.textContent='첫 작업은 자유롭게. 이후엔 피드백 3회 필요.';status.textContent=''}
-  else if(fbCount>=3){lbl.textContent='피드백 3회 완료. 업로드 가능해요.';status.textContent='업로드 가능'}
-  else{lbl.textContent=`업로드까지 피드백 ${3-fbCount}회 더 필요해요.`;status.textContent=`${fbCount}/3`}
+  if(!hasPosted){
+    if(lbl)lbl.textContent='첫 작업은 무료! 이후엔 피드백 3회 필요해요.';
+    if(status)status.textContent='';
+  }else if(fbCount>=3){
+    if(lbl)lbl.textContent='피드백 3회 완료! 지금 올릴 수 있어요 🎉';
+    if(status)status.textContent='✓';
+  }else{
+    if(lbl)lbl.textContent=`피드백 ${3-fbCount}회 더 하면 올릴 수 있어요`;
+    if(status)status.textContent=`${fbCount}/3`;
+  }
 }
 
 // ══ 역할 필터 ══
@@ -194,111 +267,85 @@ function getFilteredPosts(){
   return fp;
 }
 
+// ══ 릴스형 피드백 피드 ══
 function renderShorts(){
   filteredPosts=getFilteredPosts();
   document.getElementById('stat-posts').textContent=posts.length;
   document.getElementById('stat-fb').textContent=posts.reduce((a,p)=>a+(p.comment_count||0),0);
-  const stack=document.getElementById('card-stack');
+  const wrap=document.getElementById('card-stack');
   const empty=document.getElementById('empty-feed');
-  if(!filteredPosts.length){stack.querySelectorAll('.s-card').forEach(c=>c.remove());empty.style.display='flex';return}
+
+  // 기존 카드 제거
+  wrap.querySelectorAll('.feed-reel-item').forEach(c=>c.remove());
+
+  if(!filteredPosts.length){empty.style.display='flex';return}
   empty.style.display='none';
-  shortsIndex=Math.min(shortsIndex,filteredPosts.length-1);
-  renderCardStack();
-}
 
-function renderCardStack(){
-  const stack=document.getElementById('card-stack');
-  stack.querySelectorAll('.s-card').forEach(c=>c.remove());
-  const show=[shortsIndex,shortsIndex+1,shortsIndex+2];
-  show.reverse().forEach((idx,ri)=>{
-    if(idx>=filteredPosts.length)return;
-    const p=filteredPosts[idx];
-    const card=makeCard(p);
-    const cls=['behind2','behind','current'][ri];
-    card.classList.add(cls);
-    stack.appendChild(card);
-  });
-  // 드래그 이벤트
-  const current=stack.querySelector('.s-card.current');
-  if(current)attachDrag(current);
-}
+  filteredPosts.forEach((p,i)=>{
+    const wanted=p.wanted||[];
+    const tags=wanted.map(w=>TC[w]?`<span class="fri-tag" style="border-color:${TC[w].color}88;color:${TC[w].color}">${TC[w].label}</span>`:'').join('');
+    const typeSegs=wanted.map(w=>TC[w]?`<div class="fri-type-seg" style="background:${TC[w].color}"></div>`:'').join('');
+    const pct=filteredPosts.length>1?Math.round((i/(filteredPosts.length-1))*100):100;
 
-function makeCard(p){
-  const wanted=p.wanted||[];
-  const lines=wanted.map(w=>TC[w]?`<div class="sc-type-seg" style="background:${TC[w].color}"></div>`:'').join('');
-  const tags=wanted.map(w=>TC[w]?`<span class="sc-tag" style="border-color:${TC[w].color}55;color:${TC[w].color}">${TC[w].label}</span>`:'').join('');
-  const roleLabel=p.author_role==='designer'?'디자이너':'일반인';
-  const roleCls=p.author_role==='designer'?'designer':'general';
-  const card=document.createElement('div');
-  card.className='s-card';
-  card.dataset.id=p.id;
-  card.innerHTML=`
-    <div class="sc-img">
-      <img src="${p.img||''}" alt="" draggable="false">
-      ${p.version?`<span class="sc-ver">${p.version}</span>`:''}
-      <span class="sc-role ${roleCls}">${roleLabel}</span>
-      <div class="sc-type-line">${lines}</div>
-    </div>
-    <div class="sc-body">
-      <div class="sc-meta">
-        <span class="sc-author">${p.author||'anon'}</span>
-        <span class="sc-time">${ts(p.created_at)}</span>
+    const item=document.createElement('div');
+    item.className='feed-reel-item';
+    const imgSrc=p.img||'';
+    item.innerHTML=`
+      <div class="fri-img-wrap" onclick="if(event.target.tagName!=='BUTTON'&&'${imgSrc}') openLightbox('${imgSrc}')">
+        ${p.img
+          ?`<img class="fri-img" src="${p.img}" alt="" loading="lazy">`
+          :`<div class="fri-img-empty"><span style="font-family:'Syne',sans-serif;font-size:.5rem;color:var(--t3);letter-spacing:3px">IMAGE</span></div>`
+        }
+        <div class="fri-progress"><div class="fri-progress-fill" style="width:${pct}%"></div></div>
+        ${p.version?`<span class="fri-ver">${p.version}</span>`:''}
+        <div class="fri-type-line">${typeSegs}</div>
+        ${p.img?`<button class="fri-expand-btn" onclick="event.stopPropagation();openLightbox('${p.img}')">⤢ 크게보기</button>`:''}
       </div>
-      <div class="sc-title">${p.title}</div>
-      <div class="sc-desc">${p.description||''}</div>
-      <div class="sc-tags">${tags}</div>
-      <div class="sc-fb-count">${p.comment_count||0}개의 피드백</div>
-    </div>
-    <div class="sc-actions">
-      <button class="sc-action-btn" onclick="skipCard(event)">건너뛰기</button>
-      <button class="sc-action-btn primary" onclick="openPostFromCard(${p.id},event)">피드백 하기</button>
-    </div>`;
-  return card;
+      <div class="fri-body">
+        <div class="fri-tags">${tags}</div>
+        <div class="fri-title">${p.title}</div>
+        <div class="fri-fb-count">${p.comment_count||0}개의 피드백</div>
+      </div>
+      <div class="fri-actions">
+        <button class="fri-btn-skip" onclick="friSkip(event,${i})">건너뛰기 ↓</button>
+        <button class="fri-btn-crit" onclick="openPostFromCard(${p.id},event)">크리틱 하기 →</button>
+      </div>
+    `;
+    wrap.appendChild(item);
+  });
+
+  // 현재 인덱스로 스크롤
+  if(shortsIndex>0){
+    const items=wrap.querySelectorAll('.feed-reel-item');
+    if(items[shortsIndex]) setTimeout(()=>items[shortsIndex].scrollIntoView({behavior:'instant'}),50);
+  }
+
+  // 스크롤로 인덱스 추적
+  let t;
+  wrap.onscroll=()=>{
+    clearTimeout(t);
+    t=setTimeout(()=>{
+      const h=wrap.clientHeight;
+      const idx=Math.round(wrap.scrollTop/h);
+      if(idx!==shortsIndex&&idx<filteredPosts.length) shortsIndex=idx;
+    },80);
+  };
 }
 
-function attachDrag(card){
-  let sx=0,sy=0,dragging=false;
-  const onStart=e=>{
-    if(e.target.tagName==='BUTTON')return;
-    dragging=true;sx=e.type==='touchstart'?e.touches[0].clientX:e.clientX;
-    sy=e.type==='touchstart'?e.touches[0].clientY:e.clientY;
-    card.style.transition='none';
-  };
-  const onMove=e=>{
-    if(!dragging)return;
-    const cx=e.type==='touchmove'?e.touches[0].clientX:e.clientX;
-    const dx=cx-sx;
-    card.style.transform=`translateX(${dx}px) rotate(${dx*0.04}deg)`;
-    const lh=document.getElementById('swipe-left-hint');
-    const rh=document.getElementById('swipe-right-hint');
-    if(dx<-30){lh.style.opacity='1';rh.style.opacity='0'}
-    else if(dx>30){rh.style.opacity='1';lh.style.opacity='0'}
-    else{lh.style.opacity='0';rh.style.opacity='0'}
-  };
-  const onEnd=e=>{
-    if(!dragging)return;dragging=false;
-    const cx=e.type==='touchend'?e.changedTouches[0].clientX:e.clientX;
-    const dx=cx-sx;
-    document.getElementById('swipe-left-hint').style.opacity='0';
-    document.getElementById('swipe-right-hint').style.opacity='0';
-    card.style.transition='';
-    if(dx<-80){swipeLeft(card)}
-    else if(dx>80){openPostFromCard(parseInt(card.dataset.id),null)}
-    else{card.style.transform=''}
-  };
-  card.addEventListener('mousedown',onStart);
-  card.addEventListener('touchstart',onStart,{passive:true});
-  window.addEventListener('mousemove',onMove);
-  window.addEventListener('touchmove',onMove,{passive:true});
-  window.addEventListener('mouseup',onEnd);
-  window.addEventListener('touchend',onEnd);
+function friSkip(e,idx){
+  e.stopPropagation();
+  const wrap=document.getElementById('card-stack');
+  const items=wrap.querySelectorAll('.feed-reel-item');
+  const next=Math.min(idx+1,filteredPosts.length-1);
+  if(items[next]) items[next].scrollIntoView({behavior:'smooth'});
+  shortsIndex=next;
 }
 
-function swipeLeft(card){
-  card.classList.add('prev');
-  setTimeout(()=>{shortsIndex=Math.min(shortsIndex+1,filteredPosts.length-1);renderCardStack()},350);
-}
-function skipCard(e){e.stopPropagation();const c=document.getElementById('card-stack').querySelector('.s-card.current');if(c)swipeLeft(c)}
+function renderCardStack(){renderShorts()}
+function makeCard(){} // 호환용
+function attachDrag(){}
+function swipeLeft(){}
+function skipCard(e){e&&e.stopPropagation();friSkip(e,shortsIndex)}
 function openPostFromCard(id,e){if(e)e.stopPropagation();openPost(typeof id==='string'?parseInt(id):id)}
 
 // ══ POSTS ══
@@ -335,7 +382,7 @@ async function openPost(id){
   document.body.style.overflow='hidden';
   renderComments(id);
 }
-function closeModal(){document.getElementById('post-modal').classList.remove('open');document.body.style.overflow='';curPost=null;}
+function closeModal(){document.getElementById('post-modal').classList.remove('open');document.body.style.overflow='';curPost=null;isAnon=false;const ab=document.getElementById('anon-toggle');if(ab){ab.classList.remove('on');ab.querySelector('.anon-icon').textContent='👤';document.getElementById('anon-label').textContent='실명';}}
 
 function renderComments(pid){
   const list=document.getElementById('c-list');
@@ -345,14 +392,13 @@ function renderComments(pid){
     const t=TC[c.type]||TC.visual;
     const isMe=(cu&&c.user_id===cu.id)||isAdmin();
     const del=isMe?`<button class="del-c" onclick="deleteComment(${pid},${c.id},event)">✕</button>`:'';
-    const roleLabel=c.author_role==='designer'?'디자이너':'일반인';
-    const roleCls=c.author_role==='designer'?'designer':'general';
+    const displayName=c.is_anon?'익명':(isMe?cu.username+' (나)':(c.author||'익명'));
+    const nameColor=c.is_anon?'var(--t3)':'var(--t2)';
     return`<div class="comment" style="border-left-color:${t.color}99">
       <div class="comment-hdr">
         <div class="comment-hdr-left">
           <span class="comment-type" style="color:${t.color}">${t.label}</span>
-          <span class="comment-auth">${isMe?cu.username+' (나)':(c.author||'anon')}</span>
-          <span class="comment-role-badge ${roleCls}">${roleLabel}</span>
+          <span style="font-family:'Syne',sans-serif;font-size:.46rem;color:${nameColor};letter-spacing:1px">${displayName}</span>
         </div>
         <div class="comment-actions">
           <button class="helpful-btn ${c.liked?'on':''}" onclick="helpful(${pid},${c.id},this)">도움됐어요 ${c.helpful||0}</button>
@@ -379,6 +425,24 @@ async function deleteComment(pid,cid,e){
   renderComments(pid);toast('삭제됐어요');
 }
 
+function toggleAnon(){
+  isAnon=!isAnon;
+  const btn=document.getElementById('anon-toggle');
+  const lbl=document.getElementById('anon-label');
+  const hint=document.getElementById('anon-hint');
+  if(isAnon){
+    btn.classList.add('on');
+    btn.querySelector('.anon-icon').textContent='🎭';
+    lbl.textContent='익명';
+    hint.textContent='피드백이 익명으로 표시돼요';
+  }else{
+    btn.classList.remove('on');
+    btn.querySelector('.anon-icon').textContent='👤';
+    lbl.textContent='실명';
+    hint.textContent='피드백은 닉네임으로 표시돼요';
+  }
+}
+
 function pickType(btn){resetTypeChips();btn.classList.add('selected');curType=btn.dataset.t;const c=TC[curType].color;btn.style.cssText=`background:${c};border-color:${c};color:#000`}
 function resetTypeChips(){document.querySelectorAll('.type-chip').forEach(c=>{c.classList.remove('selected');c.style.cssText=''})}
 
@@ -388,7 +452,8 @@ async function sendComment(){
   if(!text){toast('내용을 입력해요');return}
   if(!curType){toast('피드백 타입을 선택해요');return}
   const p=posts.find(x=>x.id===curPost);
-  const newC=await sb.post('comments',{post_id:curPost,type:curType,text,author:cu.username,user_id:cu.id,helpful:0,author_role:cu.role||'general'});
+  const authorName=isAnon?'익명':cu.username;
+  const newC=await sb.post('comments',{post_id:curPost,type:curType,text,author:authorName,user_id:cu.id,helpful:0,author_role:cu.role||'general',is_anon:isAnon});
   if(newC){if(!comments[curPost])comments[curPost]=[];comments[curPost].push({...newC,liked:false});p.comment_count=(p.comment_count||0)+1;await sb.patch('posts',curPost,{comment_count:p.comment_count})}
   if(hasPosted&&fbCount<3){fbCount++;gateUpdate();if(fbCount===3)toast('피드백 3회 완료! 이제 업로드 가능해요 🎉');else toast(`피드백 등록 (${fbCount}/3)`)}
   else toast('피드백이 등록됐어요');
@@ -525,7 +590,11 @@ async function loadRecruits(){
   const data=await sb.get('recruits','order=created_at.desc');
   recruits=Array.isArray(data)?data:[];
   document.getElementById('stat-users').textContent=recruits.length;
-  renderRecruits(crf);
+  recruitSearchQuery=''; recruitHashtag='all';
+  const si=document.getElementById('recruit-search');
+  if(si) si.value='';
+  document.querySelectorAll('.recruit-hashtag').forEach((b,i)=>b.classList.toggle('on',i===0));
+  renderFilteredRecruits();
 }
 function renderRecruits(f='all'){
   const filtered=f==='all'?recruits:recruits.filter(r=>r.type===f);
@@ -540,7 +609,7 @@ function renderRecruits(f='all'){
         <div class="r-title">${r.title}</div>
         <div class="r-desc">${r.description||''}</div>
         <div class="r-meta">
-          <span class="r-author">${r.author||'anon'}</span>
+          <span class="r-author" style="display:none"></span>
           <span class="r-time">${ts(r.created_at)}</span>
           ${r.deadline?`<span class="r-deadline">~${r.deadline}</span>`:''}
         </div>
@@ -549,7 +618,9 @@ function renderRecruits(f='all'){
   }).join('');
 }
 function filterRecruit(type,btn){
-  crf=type;document.querySelectorAll('#tab-recruit .f-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderRecruits(type);
+  crf=type;
+  if(btn){document.querySelectorAll('#tab-recruit .f-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  renderRecruits(type);
 }
 
 let recruitTypeSelected='contest';
@@ -585,7 +656,7 @@ async function openRecruitDetail(id){
   document.getElementById('rd-title').textContent=r.title;
   document.getElementById('rd-desc').textContent=r.description||'';
   document.getElementById('rd-type').textContent=t.label;document.getElementById('rd-type').style.cssText=`border-color:${t.color};color:${t.color}`;
-  document.getElementById('rd-author').textContent=r.author||'anon';
+  document.getElementById('rd-author').textContent='';
   document.getElementById('rd-time').textContent=ts(r.created_at);
   document.getElementById('rd-deadline').textContent=r.deadline?`마감 ${r.deadline}`:'';
   document.getElementById('rd-delete-btn').style.display=isMe?'flex':'none';
@@ -599,7 +670,7 @@ function closeRecruitDetail(){document.getElementById('recruit-detail-modal').cl
 function renderRComments(rid){
   const list=document.getElementById('rd-c-list');const cs=rComments[rid]||[];
   if(!cs.length){list.innerHTML='<div style="font-family:\'Space Mono\',monospace;font-size:.5rem;color:var(--t3);letter-spacing:2px">첫 댓글을 남겨봐요</div>';return}
-  list.innerHTML=cs.map(c=>{const isMe=(cu&&c.user_id===cu.id)||isAdmin();const del=isMe?`<button class="del-c" onclick="deleteRComment(${rid},${c.id},event)">✕</button>`:'';return`<div class="rd-comment"><div class="rd-c-hdr"><span class="rd-c-auth">${isMe?cu.username+' (나)':(c.author||'anon')}</span>${del}</div><div class="rd-c-txt">${c.text}</div></div>`}).join('');
+  list.innerHTML=cs.map(c=>{const isMe=(cu&&c.user_id===cu.id)||isAdmin();const del=isMe?`<button class="del-c" onclick="deleteRComment(${rid},${c.id},event)">✕</button>`:'';return`<div class="rd-comment"><div class="rd-c-hdr"><span class="rd-c-auth" style="display:none"></span>${del}</div><div class="rd-c-txt">${c.text}</div></div>`}).join('');
 }
 async function sendRecruitComment(){
   if(!requireLogin('댓글을 남기려면 로그인 해줘요!'))return;
@@ -865,46 +936,56 @@ document.getElementById('signup-id').addEventListener('keydown',e=>{if(e.key==='
 let gmPendingType=null, gmPendingPostId=null, gmSelectedCtags=[];
 
 function gmReact(type){
-  if(type==='skip'){gmIndex++;gmRenderStack();return}
-  // 반응 기록 후 댓글 팝업
   const p=posts[gmIndex];
-  if(!p)return;
-  gmPendingType=type;
-  gmPendingPostId=p.id;
+  if(!p && type!=='skip') return;
 
-  // 이모지 플로팅 효과
-  const emojis={good:'👍',bad:'👎',fire:'💥'};
-  const el=document.createElement('div');
-  el.className='gm-float';
-  el.textContent=emojis[type]||'👍';
-  el.style.cssText=`left:${window.innerWidth/2-20}px;top:${window.innerHeight/2-40}px`;
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(),700);
+  if(type==='skip'){
+    // 다음으로 스크롤
+    gmIndex=Math.min(gmIndex+1,posts.length-1);
+    const wrap=document.getElementById('gm-reel-wrap');
+    const items=document.getElementById('gm-stack').querySelectorAll('.gm-reel-item');
+    if(items[gmIndex]) items[gmIndex].scrollIntoView({behavior:'smooth'});
+    document.getElementById('gm-progress').textContent=`${gmIndex+1} / ${posts.length}`;
+    return;
+  }
+
+  gmPendingType=type; gmPendingPostId=p.id;
+
+  // 이모지 오버레이 표시
+  const emojis={good:'👍',bad:'😑',fire:'🔥',wow:'😮',confused:'🤔'};
+  const overlay=document.getElementById(`reel-overlay-${gmIndex}`);
+  const emojiEl=document.getElementById(`reel-emoji-${gmIndex}`);
+  if(overlay && emojiEl){
+    emojiEl.textContent=emojis[type]||'👍';
+    overlay.classList.add('show');
+    setTimeout(()=>overlay.classList.remove('show'),600);
+  }
 
   // 반응 카운트 업
   if(type==='good') gmNice++;
   else if(type==='bad') gmBad++;
   else if(type==='fire') gmFire++;
+  else if(type==='wow') gmWow++;
+  else if(type==='confused') gmConfused++;
+  document.getElementById('gm-nice-count').textContent=gmNice;
+  document.getElementById('gm-bad-count').textContent=gmBad;
+  document.getElementById('gm-fire-count').textContent=gmFire;
 
-  // 카드 스와이프
-  const stack=document.getElementById('gm-stack');
-  const cur=stack.querySelector('.gm-card.cur');
-  if(cur){
-    cur.classList.remove('cur');
-    cur.classList.add(type==='bad'?'gone-l':'gone-r');
-  }
-  gmIndex++;
+  // 다음으로 스크롤
+  const nextIdx=gmIndex+1;
+  gmIndex=nextIdx;
+  setTimeout(()=>{
+    const wrap=document.getElementById('gm-reel-wrap');
+    const items=document.getElementById('gm-stack').querySelectorAll('.gm-reel-item');
+    if(items[nextIdx]) items[nextIdx].scrollIntoView({behavior:'smooth'});
+    else document.getElementById('gm-empty').style.display='flex';
+    document.getElementById('gm-progress').textContent=`${Math.min(gmIndex+1,posts.length)} / ${posts.length}`;
+  }, 200);
 
-  // 댓글 팝업 표시 (good/fire일 때만, 3번에 1번)
+  // 댓글 팝업 (good/fire, 3번에 1번)
   const showComment=(type==='good'||type==='fire')&&(gmNice+gmFire)%3===0;
-  if(showComment){
-    setTimeout(()=>gmShowCommentPopup(type, p),200);
-  } else {
-    setTimeout(()=>{
-      gmRenderStack();
-      gmCheckTreat();
-    }, 360);
-  }
+  if(showComment) setTimeout(()=>gmShowCommentPopup(type,p),500);
+  gmCheckTreat();
 }
 
 function gmShowCommentPopup(type, p){
@@ -947,20 +1028,22 @@ async function gmCommentSend(){
 }
 
 function gmCheckTreat(){
-  const total=gmNice+gmBad+gmFire;
+  const total=gmNice+gmBad+gmFire+gmWow+gmConfused;
   if(total===5||total===15||total===30){
     gmShowTreat();
   }
 }
 
 function gmShowTreat(){
-  const total=gmNice+gmBad+gmFire;
+  const total=gmNice+gmBad+gmFire+gmWow+gmConfused;
   // 유형 분석
   let emoji,title,desc;
-  if(gmFire>=gmNice&&gmFire>=gmBad){emoji='💥';title='당신은 강렬파!';desc='강렬하다는 반응을 많이 눌렀어요. 임팩트 있는 비주얼에 반응하는 눈이 예리하네요.'}
+  if(gmFire>=gmNice&&gmFire>=gmBad&&gmFire>=gmWow){emoji='🔥';title='당신은 강렬파!';desc='강렬하다는 반응을 많이 눌렀어요. 임팩트 있는 비주얼을 바로 알아보는 눈이 있어요.'}
+  else if(gmWow>gmNice&&gmWow>gmBad){emoji='😮';title='당신은 호기심파!';desc='신기하다는 반응이 많았어요. 새롭고 독특한 시도에 관심이 많은 타입이에요.'}
+  else if(gmConfused>gmNice){emoji='🤔';title='당신은 분석파!';desc='모르겠다는 반응이 많았어요. 작품을 깊이 생각하며 보는 신중한 타입이에요.'}
   else if(gmNice>gmBad*2){emoji='✨';title='당신은 감각파!';desc='좋아요를 많이 눌렀어요. 시각적으로 끌리는 작업을 금방 알아보는 눈이 있어요.'}
-  else if(gmBad>gmNice){emoji='🎯';title='당신은 날카로운 눈!';desc='별로라는 반응을 많이 눌렀어요. 기준이 높고 디테일을 잘 보는 타입이에요.'}
-  else{emoji='🌀';title='당신은 균형파!';desc='다양한 반응을 골고루 눌렀어요. 상황에 따라 다르게 보는 균형 잡힌 시각이 있어요.'}
+  else if(gmBad>gmNice){emoji='🎯';title='당신은 날카로운 눈!';desc='별로라는 반응이 많았어요. 기준이 높고 디테일을 잘 보는 타입이에요.'}
+  else{emoji='🌀';title='당신은 균형파!';desc='다양한 반응을 골고루 눌렀어요. 상황에 따라 다르게 보는 균형 잡힌 시각이에요.'}
 
   document.getElementById('gm-treat-emoji').textContent=emoji;
   document.getElementById('gm-treat-title').textContent=title;
@@ -973,11 +1056,7 @@ function gmShowTreat(){
 function gmTreatSignup(){document.getElementById('gm-treat-popup').classList.remove('open');goToAuth()}
 function gmTreatContinue(){document.getElementById('gm-treat-popup').classList.remove('open')}
 
-// 드래그 스와이프 → gmReact 직접 호출
-function gmSwipe(type){
-  if(type==='bad') gmReact('bad');
-  else gmReact('good');
-}
+function gmSwipe(type){ gmReact(type); }
 
 // ══ 진입 분기 ══
 function showEntryGate(){
@@ -985,6 +1064,22 @@ function showEntryGate(){
   document.getElementById('general-mode').style.display='none';
   document.getElementById('app').style.display='none';
   document.getElementById('auth-screen').style.display='none';
+  // 참여자 수 표시
+  loadEntryStats();
+}
+
+async function loadEntryStats(){
+  try{
+    const profiles = await sb.get('profiles','select=role');
+    if(Array.isArray(profiles)){
+      const d = profiles.filter(p=>p.role==='designer'||!p.role).length;
+      const g = profiles.filter(p=>p.role==='general').length;
+      const dEl = document.getElementById('eg-d-count');
+      const gEl = document.getElementById('eg-g-count');
+      if(dEl) dEl.textContent = d;
+      if(gEl) gEl.textContent = g;
+    }
+  }catch{}
 }
 function enterAsDesigner(){
   document.getElementById('entry-gate').style.display='none';
@@ -1008,52 +1103,73 @@ function showLoginFromGate(){
 }
 
 // ══ 일반인 스와이프 모드 ══
-let gmIndex=0, gmNice=0, gmBad=0, gmFire=0;
+let gmIndex=0, gmNice=0, gmBad=0, gmFire=0, gmWow=0, gmConfused=0;
 
-function gmRenderStack(){
+function gmRenderStack(){ gmRenderReel(); }
+
+function gmRenderReel(){
   const stack=document.getElementById('gm-stack');
-  stack.querySelectorAll('.gm-card').forEach(c=>c.remove());
+  const wrap=document.getElementById('gm-reel-wrap');
+  stack.innerHTML='';
   document.getElementById('gm-empty').style.display='none';
-  document.getElementById('gm-label-nope').style.opacity='0';
-  document.getElementById('gm-label-nice').style.opacity='0';
 
-  if(gmIndex>=posts.length){
+  if(!posts.length){
     document.getElementById('gm-empty').style.display='flex';
-    document.getElementById('gm-progress').textContent=`${posts.length} / ${posts.length}`;
     return;
   }
-  document.getElementById('gm-progress').textContent=`${gmIndex+1} / ${posts.length}`;
+
+  document.getElementById('gm-progress').textContent=`${Math.min(gmIndex+1,posts.length)} / ${posts.length}`;
   document.getElementById('gm-nice-count').textContent=gmNice;
   document.getElementById('gm-bad-count').textContent=gmBad;
   document.getElementById('gm-fire-count').textContent=gmFire;
 
-  // 카드 3장 미리 렌더
-  const toShow=[gmIndex, gmIndex+1, gmIndex+2].filter(i=>i<posts.length);
-  [...toShow].reverse().forEach((idx,ri)=>{
-    const p=posts[idx];
-    const card=document.createElement('div');
-    card.className='gm-card';
-    card.dataset.idx=idx;
-    const TC2={visual:{label:'시각',color:'#d94f3d'},idea:{label:'아이디어',color:'#b8942a'},ux:{label:'경험',color:'#3f7a58'}};
-    const tags=(p.wanted||[]).map(w=>TC2[w]?`<span class="gm-card-tag" style="border-color:${TC2[w].color}55;color:${TC2[w].color}">${TC2[w].label}</span>`:'').join('');
-    card.innerHTML=`
+  const TC2={visual:{label:'시각',color:'#d94f3d'},idea:{label:'아이디어',color:'#b8942a'},ux:{label:'경험',color:'#3f7a58'}};
+
+  posts.forEach((p,i)=>{
+    const tags=(p.wanted||[]).map(w=>TC2[w]?`<span class="gm-reel-tag" style="border-color:${TC2[w].color}88;color:${TC2[w].color}">${TC2[w].label}</span>`:'').join('');
+    const item=document.createElement('div');
+    item.className='gm-reel-item';
+    item.dataset.idx=i;
+    item.innerHTML=`
       ${p.img
-        ? `<img class="gm-img" src="${p.img}" alt="" draggable="false">`
-        : `<div class="gm-img-placeholder"><span>IMAGE</span></div>`
+        ? `<img class="gm-reel-img" src="${p.img}" alt="">`
+        : `<div class="gm-reel-img-placeholder"><span style="font-family:'Syne',sans-serif;font-size:.5rem;color:var(--t3);letter-spacing:3px">IMAGE</span></div>`
       }
-      <div class="gm-card-info">
-        <div class="gm-card-author">${p.author||'anon'}${p.author_role==='designer'?' · 디자이너':' · 일반인'}</div>
-        <div class="gm-card-title">${p.title}</div>
-        <div class="gm-card-tags">${tags}</div>
-      </div>`;
-    const cls=['nxt2','nxt','cur'][ri];
-    card.classList.add(cls);
-    stack.appendChild(card);
+      <div class="gm-reel-react-overlay" id="reel-overlay-${i}">
+        <span class="gm-reel-react-emoji" id="reel-emoji-${i}"></span>
+      </div>
+      <div class="gm-reel-info">
+        <div class="gm-reel-title">${p.title}</div>
+        <div class="gm-reel-tags">${tags}</div>
+      </div>
+      <div class="gm-reel-num">${i+1} / ${posts.length}</div>
+    `;
+    stack.appendChild(item);
   });
 
-  // 드래그 이벤트
-  const cur=stack.querySelector('.gm-card.cur');
-  if(cur) gmAttachDrag(cur);
+  // 현재 인덱스로 스크롤
+  if(gmIndex>0){
+    const items=stack.querySelectorAll('.gm-reel-item');
+    if(items[gmIndex]) items[gmIndex].scrollIntoView({behavior:'instant'});
+  }
+
+  // 스크롤로 현재 인덱스 추적
+  let scrollTimer;
+  wrap.onscroll=()=>{
+    clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(()=>{
+      const itemH=wrap.clientHeight;
+      const newIdx=Math.round(wrap.scrollTop/itemH);
+      if(newIdx!==gmIndex && newIdx<posts.length){
+        gmIndex=newIdx;
+        document.getElementById('gm-progress').textContent=`${gmIndex+1} / ${posts.length}`;
+      }
+      // 마지막 도달 시
+      if(gmIndex>=posts.length-1){
+        setTimeout(()=>gmCheckTreat(),800);
+      }
+    },100);
+  };
 }
 
 function gmAttachDrag(card){
