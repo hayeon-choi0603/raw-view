@@ -64,9 +64,16 @@
 
 <!-- ══ 진입 분기 ══ -->
 <div id="entry-gate">
+  <div class="eg-top-badge">국민대학교 시각디자인학과</div>
   <div class="eg-logo">RAWVIEW</div>
-  <h1 class="eg-title">나는 어떤<br>사람이에요?</h1>
-  <p class="eg-sub">목적에 맞는 화면으로 바로 안내해드려요.</p>
+  <p class="eg-tagline">디자이너의 작업에 날것의 크리틱을 남기는 플랫폼</p>
+  <div class="eg-stats-row">
+    <div class="eg-stat-chip"><strong id="eg-d-count">-</strong>디자이너</div>
+    <div class="eg-stat-chip-dot"></div>
+    <div class="eg-stat-chip"><strong id="eg-g-count">-</strong>일반인 참여</div>
+  </div>
+  <div class="eg-divider"></div>
+  <h1 class="eg-title">어떻게<br>참여할까요?</h1>
   <div class="eg-cards">
     <!-- 디자이너 -->
     <div class="eg-card eg-card-designer" onclick="enterAsDesigner()">
@@ -76,8 +83,8 @@
       </svg>
       <div>
         <div class="eg-card-label">Designer</div>
-        <div class="eg-card-title">나는<br>디자이너</div>
-        <div class="eg-card-desc">작업 올리기,<br>팀모집, 스터디까지</div>
+        <div class="eg-card-title">크리틱<br>하러 왔어</div>
+        <div class="eg-card-desc">작업 올리기 · 팀모집<br>스터디 · 피드백 주고받기</div>
       </div>
       <div class="eg-card-arrow">↗</div>
     </div>
@@ -89,13 +96,13 @@
       </svg>
       <div>
         <div class="eg-card-label">General</div>
-        <div class="eg-card-title">그냥<br>구경할래</div>
-        <div class="eg-card-desc">가입 없이<br>바로 반응할 수 있어요</div>
+        <div class="eg-card-title">크리틱<br>구경할게</div>
+        <div class="eg-card-desc">가입 없이 릴스처럼 스크롤하며<br>솔직한 반응을 남겨봐요</div>
       </div>
       <div class="eg-card-arrow">↗</div>
     </div>
   </div>
-  <p class="eg-login">이미 계정이 있어? <a onclick="showLoginFromGate()">로그인</a></p>
+  <p class="eg-login">계속하려면 <a onclick="showLoginFromGate()">로그인</a>하거나 가입 없이 둘러봐요</p>
 </div>
 
 <!-- ══ 일반인 스와이프 모드 ══ -->
@@ -111,30 +118,22 @@
     <div class="gm-react-chip">💥 <span id="gm-fire-count">0</span></div>
     <div class="gm-react-chip">👎 <span id="gm-bad-count">0</span></div>
   </div>
-  <div class="gm-stack" id="gm-stack">
-    <div class="gm-label gm-label-nope" id="gm-label-nope">NOPE</div>
-    <div class="gm-label gm-label-nice" id="gm-label-nice">NICE</div>
+  <!-- 릴스형 스크롤 피드 -->
+  <div class="gm-reel-wrap" id="gm-reel-wrap">
     <div class="gm-empty" id="gm-empty" style="display:none">
       <p>작업을 다 봤어요!</p>
       <button class="gm-signup-nudge" onclick="goToAuth()">가입하고 더 보기 →</button>
     </div>
+    <div id="gm-stack"></div>
   </div>
-  <div class="gm-actions">
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-      <button class="gm-btn gm-btn-skip" onclick="gmReact('skip')" title="건너뛰기">↩</button>
-      <div class="gm-btn-hint">넘기기</div>
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-      <button class="gm-btn gm-btn-bad" onclick="gmReact('bad')" title="별로">👎</button>
-      <div class="gm-btn-hint">별로야</div>
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-      <button class="gm-btn gm-btn-good" onclick="gmReact('good')" title="좋아">👍</button>
-      <div class="gm-btn-hint">좋아!</div>
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-      <button class="gm-btn gm-btn-fire" onclick="gmReact('fire')" title="강렬해">💥</button>
-      <div class="gm-btn-hint">강렬해</div>
+  <!-- 하단 반응 버튼 (항상 고정) -->
+  <div class="gm-reel-actions" id="gm-reel-actions">
+    <div class="gm-reel-btn-row">
+      <button class="gm-reel-btn confused" onclick="gmReact('confused')"><span>🤔</span><small>모르겠어</small></button>
+      <button class="gm-reel-btn bad" onclick="gmReact('bad')"><span>😑</span><small>별로야</small></button>
+      <button class="gm-reel-btn good" onclick="gmReact('good')"><span>👍</span><small>좋아!</small></button>
+      <button class="gm-reel-btn fire" onclick="gmReact('fire')"><span>🔥</span><small>강렬해</small></button>
+      <button class="gm-reel-btn wow" onclick="gmReact('wow')"><span>😮</span><small>신기해</small></button>
     </div>
   </div>
 
@@ -143,13 +142,40 @@
   <div class="gm-comment-box">
     <div class="gm-comment-title" id="gm-comment-reaction-title">💥 강렬하다고 생각했어요!</div>
     <div class="gm-comment-sub">한마디 남기면 디자이너에게 큰 힘이 돼요 (선택)</div>
-    <div class="gm-comment-tags">
-      <button class="gm-ctag" onclick="gmToggleCtag(this)">색감이 눈에 띄어요</button>
-      <button class="gm-ctag" onclick="gmToggleCtag(this)">뭔지 바로 이해돼요</button>
-      <button class="gm-ctag" onclick="gmToggleCtag(this)">복잡해 보여요</button>
-      <button class="gm-ctag" onclick="gmToggleCtag(this)">뭔가 끌려요</button>
-      <button class="gm-ctag" onclick="gmToggleCtag(this)">심심해 보여요</button>
-      <button class="gm-ctag" onclick="gmToggleCtag(this)">신선해요</button>
+    <!-- 시각 -->
+    <div class="gm-ctag-section">
+      <div class="gm-ctag-section-label">👁 시각</div>
+      <div class="gm-comment-tags">
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">색이 강렬해요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">색이 너무 많아요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">눈에 딱 들어와요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">여백이 아쉬워요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">폰트가 멋있어요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">정돈된 느낌이에요</button>
+      </div>
+    </div>
+    <!-- 아이디어 -->
+    <div class="gm-ctag-section">
+      <div class="gm-ctag-section-label">💡 아이디어</div>
+      <div class="gm-comment-tags">
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">뭔지 바로 이해돼요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">뭔지 잘 모르겠어요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">신선하고 독특해요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">본 적 있는 느낌이에요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">메시지가 명확해요</button>
+      </div>
+    </div>
+    <!-- 경험/감성 -->
+    <div class="gm-ctag-section">
+      <div class="gm-ctag-section-label">✨ 감성</div>
+      <div class="gm-comment-tags">
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">뭔가 끌려요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">심심해 보여요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">감정이 느껴져요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">차갑고 세련됐어요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">따뜻하고 편안해요</button>
+        <button class="gm-ctag" onclick="gmToggleCtag(this)">강렬하고 임팩트 있어요</button>
+      </div>
     </div>
     <textarea class="gm-comment-input" id="gm-comment-input" placeholder="짧게 한마디 남겨봐요..."></textarea>
     <div class="gm-comment-actions">
@@ -197,9 +223,10 @@
   <div class="land-header">
     <h1 class="land-title">날것의 피드백. <em>90→100.</em></h1>
     <div class="land-stats">
-      <div class="land-stat"><span id="stat-posts">0</span><small>작업</small></div>
-      <div class="land-stat"><span id="stat-fb">0</span><small>피드백</small></div>
-      <div class="land-stat"><span id="stat-users">0</span><small>참여자</small></div>
+      <div class="land-stat"><small>작업</small><span id="stat-posts">0</span></div>
+      <div class="land-stat"><small>피드백</small><span id="stat-fb">0</span></div>
+      <div class="land-stat"><small>디자이너</small><span id="stat-designers">0</span></div>
+      <div class="land-stat"><small>일반인</small><span id="stat-generals">0</span></div>
     </div>
   </div>
 
@@ -257,23 +284,31 @@
     <button class="back-btn" onclick="goLanding()">← 돌아가기</button>
     <span class="room-name">피드백</span>
     <div class="room-right">
-      <button class="btn-post" onclick="openUpload()">+ 작업 올리기<span class="gate-badge" id="gate-badge"></span></button>
+      <span id="gate-badge" style="display:none"></span>
     </div>
   </div>
-  <div class="feed-top">
-    <div class="feed-role-tabs">
-      <button class="frt-btn active-all" id="frt-all" onclick="setRoleFilter('all',this)">전체</button>
-      <button class="frt-btn" id="frt-d" onclick="setRoleFilter('designer',this)">디자이너 시선</button>
-      <button class="frt-btn" id="frt-g" onclick="setRoleFilter('general',this)">일반인 시선</button>
+  <!-- 업로드 CTA 배너 -->
+  <div class="feed-cta-banner" id="feed-cta-banner">
+    <div class="feed-cta-left">
+      <div class="feed-cta-title">내 작업 올리기</div>
+      <div class="feed-cta-desc" id="gate-label">첫 작업은 자유롭게. 이후엔 피드백 3회 필요.</div>
     </div>
-    <div class="gate-row">
-      <span class="gate-txt" id="gate-label"></span>
+    <div class="feed-cta-gate">
       <div class="gate-pips">
         <div class="gate-pip" id="p0"></div>
         <div class="gate-pip" id="p1"></div>
         <div class="gate-pip" id="p2"></div>
       </div>
-      <span style="font-family:'Space Mono',monospace;font-size:.46rem;color:var(--green);letter-spacing:2px;margin-left:6px" id="gate-status"></span>
+      <span id="gate-status" style="font-family:'Syne',sans-serif;font-size:.48rem;color:var(--green);letter-spacing:1px"></span>
+    </div>
+    <button class="feed-cta-btn" onclick="openUpload()">+ 올리기</button>
+  </div>
+  <!-- 역할 필터 -->
+  <div class="feed-top">
+    <div class="feed-role-tabs">
+      <button class="frt-btn active-all" id="frt-all" onclick="setRoleFilter('all',this)">전체</button>
+      <button class="frt-btn" id="frt-d" onclick="setRoleFilter('designer',this)">디자이너</button>
+      <button class="frt-btn" id="frt-g" onclick="setRoleFilter('general',this)">일반인</button>
     </div>
   </div>
   <div class="filter-bar">
@@ -282,19 +317,10 @@
     <button class="f-btn" onclick="filterPosts('idea',this)">아이디어</button>
     <button class="f-btn" onclick="filterPosts('ux',this)">경험</button>
   </div>
-  <!-- 숏츠형 피드 -->
-  <div class="shorts-wrap" id="shorts-wrap">
-    <div class="card-stack" id="card-stack">
-      <div class="empty-feed" id="empty-feed" style="display:none">
-        <p>아직 작업이 없어요</p>
-      </div>
-    </div>
-    <div class="swipe-left-hint" id="swipe-left-hint">SKIP ←</div>
-    <div class="swipe-right-hint" id="swipe-right-hint">→ 피드백</div>
-    <div class="shorts-hint">
-      <span>← 건너뛰기</span>
-      <span>|</span>
-      <span>피드백 하기 →</span>
+  <!-- 릴스형 피드백 피드 -->
+  <div class="feed-reel-wrap" id="card-stack">
+    <div class="feed-reel-empty" id="empty-feed" style="display:none">
+      <p>아직 작업이 없어요</p>
     </div>
   </div>
 </div>
@@ -308,13 +334,18 @@
       <button class="btn-post" onclick="openRecruitUpload()">+ 모집 글 올리기</button>
     </div>
   </div>
-  <div class="filter-bar">
-    <button class="f-btn active" onclick="filterRecruit('all',this)">전체</button>
-    <button class="f-btn" onclick="filterRecruit('contest',this)">공모전</button>
-    <button class="f-btn" onclick="filterRecruit('project',this)">프로젝트</button>
-    <button class="f-btn" onclick="filterRecruit('study',this)">스터디</button>
-    <button class="f-btn" onclick="filterRecruit('etc',this)">기타</button>
-    <span style="margin-left:auto;padding:0 48px 0 0;font-family:'Space Mono',monospace;font-size:.46rem;color:var(--t3);align-self:center;letter-spacing:2px"><span id="recruit-count">0</span>개</span>
+  <!-- 검색창 -->
+  <div class="recruit-search-wrap">
+    <input class="recruit-search-input" id="recruit-search" type="text" placeholder="팀 / 공모전 / 프로젝트 검색..." oninput="searchRecruit(this.value)">
+    <span style="font-family:'Syne',sans-serif;font-size:.62rem;color:#aaa;flex-shrink:0"><span id="recruit-count">0</span>개</span>
+  </div>
+  <!-- 해시태그 -->
+  <div class="recruit-hashtags">
+    <button class="recruit-hashtag on" onclick="toggleHashtag(this,'all')"># 전체</button>
+    <button class="recruit-hashtag" onclick="toggleHashtag(this,'contest')"># 공모전</button>
+    <button class="recruit-hashtag" onclick="toggleHashtag(this,'project')"># 프로젝트</button>
+    <button class="recruit-hashtag" onclick="toggleHashtag(this,'study')"># 스터디</button>
+    <button class="recruit-hashtag" onclick="toggleHashtag(this,'etc')"># 기타</button>
   </div>
   <div class="recruit-wrap">
     <div class="recruit-list" id="recruit-list"></div>
@@ -423,6 +454,13 @@
               <button class="type-chip" data-t="visual" onclick="pickType(this)">시각</button>
               <button class="type-chip" data-t="idea" onclick="pickType(this)">아이디어</button>
               <button class="type-chip" data-t="ux" onclick="pickType(this)">경험</button>
+            </div>
+            <div class="anon-toggle-row">
+              <button class="anon-btn" id="anon-toggle" onclick="toggleAnon()" data-anon="false">
+                <span class="anon-icon">👤</span>
+                <span class="anon-label" id="anon-label">실명</span>
+              </button>
+              <span class="anon-hint" id="anon-hint">피드백은 닉네임으로 표시돼요</span>
             </div>
             <div class="input-row">
               <textarea class="c-input" id="c-input" placeholder="날것의 피드백을 남겨요..."></textarea>
@@ -568,6 +606,10 @@
   </div>
 </div>
 
+<!-- 이미지 라이트박스 -->
+<div id="img-lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
 <div class="toast" id="toast"></div>
 
 <script src="app.js"></script>
