@@ -2557,3 +2557,480 @@ nav{display:flex;align-items:center;padding:0 48px;height:52px;border-bottom:1px
 .ic-btn[onclick*="deletePost"]::before{ content:'삭제' !important; font-size:.5rem !important }
 
 /* drop-zone 텍스트 */
+
+/* ══ nav 뒤로가기 버튼 ══ */
+.nav-back-gate{
+  background:none;border:1px solid rgba(0,0,0,.15);
+  color:#555;font-family:'Syne',sans-serif;
+  font-size:.6rem;font-weight:600;
+  padding:7px 14px;cursor:pointer;
+  border-radius:8px;letter-spacing:.5px;
+  transition:all .15s;margin-right:8px;
+}
+.nav-back-gate:hover{border-color:rgba(0,0,0,.35);color:#111}
+
+/* ══ 진입화면 폰트 크기 줄이기 ══ */
+.eg-title{
+  font-family:'Syne',sans-serif !important;
+  font-weight:800 !important;
+  font-size:clamp(1.8rem,4vw,2.8rem) !important;
+  letter-spacing:-1.5px !important;
+  line-height:1.05 !important;
+  text-align:center !important;
+}
+.eg-card-title{
+  font-size:1.3rem !important;
+  line-height:1.1 !important;
+}
+.eg-card-desc{
+  font-size:.72rem !important;
+  line-height:1.65 !important;
+}
+
+/* ══ 랜딩 "날것의 피드백" 일렬 정렬 ══ */
+.land-title{
+  font-family:'Syne',sans-serif !important;
+  font-size:clamp(1.4rem,2.8vw,2.2rem) !important;
+  font-weight:800 !important;
+  letter-spacing:-1px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  line-height:1.1 !important;
+}
+.land-title em{
+  font-style:normal !important;
+  color:var(--t2) !important;
+  font-weight:400 !important;
+  font-family:'Syne',sans-serif !important;
+}
+.land-header{
+  align-items:center !important;
+}
+
+/* ══ 피드백 카드 버튼 — 모바일에서 항상 보이게 ══ */
+.fri-actions{
+  display:flex !important;
+  flex-shrink:0 !important;
+  padding:12px 20px 20px !important;
+  gap:10px !important;
+  background:#fff !important;
+  position:sticky !important;
+  bottom:0 !important;
+  z-index:5 !important;
+}
+.fri-btn-skip,.fri-btn-crit{
+  display:block !important;
+  width:100% !important;
+  text-align:center !important;
+}
+.feed-reel-item{
+  display:flex !important;
+  flex-direction:column !important;
+}
+.fri-img-wrap{
+  flex:1 !important;
+  min-height:0 !important;
+  max-height:calc(100% - 130px) !important;
+}
+.fri-body{
+  flex-shrink:0 !important;
+  padding:14px 20px 0 !important;
+}
+
+/* ══ 로그인/회원가입 — 흰 배경 검은 글씨 완전 수정 ══ */
+#auth-screen{
+  background:#fff !important;
+  color:#111 !important;
+}
+.auth-wrap{ color:#111 !important }
+.auth-logo{
+  font-family:'Syne',sans-serif !important;
+  color:#111 !important;
+  font-size:.72rem !important;
+  font-weight:800 !important;
+  letter-spacing:8px !important;
+}
+.auth-tab{
+  font-family:'Syne',sans-serif !important;
+  font-size:.6rem !important;
+  font-weight:600 !important;
+  color:#aaa !important;
+  background:none !important;
+  border-color:transparent !important;
+}
+.auth-tab.active{
+  color:#111 !important;
+  border-bottom-color:#111 !important;
+}
+.auth-tabs{
+  border-bottom-color:rgba(0,0,0,.1) !important;
+}
+.auth-input{
+  background:#f5f5f5 !important;
+  border:1px solid rgba(0,0,0,.12) !important;
+  color:#111 !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:.88rem !important;
+}
+.auth-input::placeholder{ color:#bbb !important }
+.auth-input:focus{ border-color:rgba(0,0,0,.3) !important; background:#fff !important }
+.auth-btn{
+  background:#111 !important;
+  color:#fff !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:.62rem !important;
+  font-weight:700 !important;
+  border-radius:8px !important;
+  padding:14px !important;
+  letter-spacing:2px !important;
+}
+.auth-btn:hover{ background:#333 !important }
+.auth-err{ font-family:'Syne',sans-serif !important; font-size:.56rem !important }
+.auth-close{
+  background:#f5f5f5 !important;
+  border-color:rgba(0,0,0,.12) !important;
+  color:#555 !important;
+}
+.auth-close:hover{ background:#eee !important; color:#111 !important }
+
+/* PIN */
+.pin-label{
+  font-family:'Syne',sans-serif !important;
+  color:#888 !important;
+  font-size:.56rem !important;
+}
+.pin-dot{
+  background:#f5f5f5 !important;
+  border-color:rgba(0,0,0,.15) !important;
+  color:#111 !important;
+  font-family:'Syne',sans-serif !important;
+}
+.pin-dot.filled{ border-color:#111 !important }
+.pin-dot.active{ border-color:#111 !important }
+.pin-pad button{
+  background:#f5f5f5 !important;
+  border-color:rgba(0,0,0,.1) !important;
+  color:#111 !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:1rem !important;
+  font-weight:700 !important;
+  border-radius:8px !important;
+}
+.pin-pad button:hover{ background:#eee !important }
+.pin-del{ color:#d94f3d !important }
+.pin-empty{ background:transparent !important; border-color:transparent !important }
+
+/* 역할 선택 버튼 */
+.role-btn{
+  font-family:'Syne',sans-serif !important;
+  font-size:.6rem !important;
+  font-weight:600 !important;
+  border-color:rgba(0,0,0,.15) !important;
+  color:#555 !important;
+  border-radius:8px !important;
+  padding:10px !important;
+}
+.role-btn:hover{ border-color:rgba(0,0,0,.3) !important; color:#111 !important }
+.role-btn.designer-on{
+  border-color:#3a6ea8 !important;
+  color:#3a6ea8 !important;
+  background:rgba(58,110,168,.08) !important;
+}
+.role-btn.on{
+  border-color:#3f7a58 !important;
+  color:#3f7a58 !important;
+  background:rgba(63,122,88,.08) !important;
+}
+.f-label{ color:#555 !important; font-family:'Syne',sans-serif !important }
+.auth-close-btn{ background:#f5f5f5 !important; color:#555 !important }
+
+@media(max-width:768px){
+  .eg-title{ font-size:clamp(1.6rem,5vw,2.2rem) !important }
+  .eg-card-title{ font-size:1.2rem !important }
+  .fri-img-wrap{ max-height:calc(100% - 120px) !important }
+  .fri-btn-crit{ font-size:.82rem !important; padding:15px !important }
+}
+
+/* ══ 입력창 테두리 확실하게 ══ */
+.auth-input{
+  background:#f8f8f8 !important;
+  border:1.5px solid rgba(0,0,0,.2) !important;
+  color:#111 !important;
+  border-radius:10px !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:.9rem !important;
+  padding:12px 14px !important;
+}
+.auth-input:focus{
+  border-color:#111 !important;
+  background:#fff !important;
+  outline:none !important;
+}
+.auth-input::placeholder{ color:#bbb !important }
+
+/* 로그인 폼 전체 배경 */
+#auth-screen{ background:#fff !important }
+.auth-wrap{ background:#fff !important }
+
+/* PIN 입력 배경 */
+.pin-dot{
+  background:#f5f5f5 !important;
+  border:1.5px solid rgba(0,0,0,.18) !important;
+  color:#111 !important;
+}
+.pin-dot.filled{ border-color:#111 !important; background:#111 !important; color:#fff !important }
+.pin-dot.active{ border-color:#555 !important }
+
+/* PIN 패드 버튼 */
+.pin-pad button{
+  background:#f8f8f8 !important;
+  border:1.5px solid rgba(0,0,0,.15) !important;
+  color:#111 !important;
+  border-radius:10px !important;
+  font-size:1.1rem !important;
+  font-weight:700 !important;
+}
+.pin-pad button:hover{ background:#eee !important; border-color:rgba(0,0,0,.25) !important }
+
+/* ══ 랜딩 타이틀 — 잘림 완전 해결 ══ */
+.land-title{
+  font-family:'Syne',sans-serif !important;
+  font-size:clamp(1rem, 2.2vw, 1.8rem) !important;
+  font-weight:800 !important;
+  letter-spacing:-.5px !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  line-height:1.2 !important;
+  word-break:keep-all !important;
+}
+.land-title em{
+  font-style:normal !important;
+  color:#888 !important;
+  font-weight:400 !important;
+  display:inline !important;
+}
+.land-header{
+  flex-wrap:wrap !important;
+  gap:12px !important;
+  padding:16px 16px 12px !important;
+}
+.land-stats{
+  flex-wrap:wrap !important;
+  gap:16px !important;
+}
+
+/* 모바일에서 더 작게 */
+@media(max-width:600px){
+  .land-title{ font-size:clamp(.9rem,4vw,1.3rem) !important }
+  .land-stat span{ font-size:1.2rem !important }
+  .land-stat small{ font-size:.38rem !important }
+}
+
+/* ══ 피드백 릴스 — 버튼 항상 보이게 완전 수정 ══ */
+
+/* 전체 피드 wrap — 높이 고정 */
+.feed-reel-wrap{
+  height:calc(100vh - 52px - 48px - 44px) !important;
+  overflow-y:scroll !important;
+  scroll-snap-type:y mandatory !important;
+  scroll-behavior:smooth !important;
+  -webkit-overflow-scrolling:touch !important;
+  display:block !important;
+}
+
+/* 각 릴스 아이템 — 뷰포트 100% 고정 */
+.feed-reel-item{
+  height:calc(100vh - 52px - 48px - 44px) !important;
+  max-height:calc(100vh - 52px - 48px - 44px) !important;
+  scroll-snap-align:start !important;
+  scroll-snap-stop:always !important;
+  display:grid !important;
+  grid-template-rows:1fr auto auto !important;
+  position:relative !important;
+  overflow:hidden !important;
+  background:#fff !important;
+}
+
+/* 이미지 — 남은 공간 모두 차지하되 절대 넘치지 않게 */
+.fri-img-wrap{
+  overflow:hidden !important;
+  min-height:0 !important;
+  max-height:none !important;
+  flex:none !important;
+  position:relative !important;
+}
+.fri-img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  display:block !important;
+}
+
+/* 정보 영역 — 컴팩트하게 */
+.fri-body{
+  padding:12px 20px 4px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:4px !important;
+  flex-shrink:0 !important;
+  background:#fff !important;
+  border-top:1px solid rgba(0,0,0,.06) !important;
+}
+.fri-title{
+  font-size:clamp(1rem,2.5vw,1.3rem) !important;
+  font-weight:800 !important;
+  color:#111 !important;
+  line-height:1.2 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+.fri-tags{ gap:5px !important }
+.fri-tag{ font-size:.5rem !important; padding:2px 8px !important }
+.fri-fb-count{ font-size:.5rem !important; margin-top:0 !important }
+
+/* 버튼 행 — 항상 하단에 고정 */
+.fri-actions{
+  display:flex !important;
+  gap:10px !important;
+  padding:10px 16px 14px !important;
+  flex-shrink:0 !important;
+  background:#fff !important;
+  border-top:1px solid rgba(0,0,0,.06) !important;
+  /* sticky 제거하고 grid에서 항상 마지막 행으로 */
+  position:relative !important;
+  bottom:auto !important;
+}
+.fri-btn-skip{
+  flex:1 !important;
+  padding:14px 0 !important;
+  border-radius:12px !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:clamp(.75rem,2vw,.88rem) !important;
+  font-weight:600 !important;
+  background:#f5f5f5 !important;
+  border:1px solid rgba(0,0,0,.1) !important;
+  color:#555 !important;
+  cursor:pointer !important;
+}
+.fri-btn-skip:active{ opacity:.7 !important }
+.fri-btn-crit{
+  flex:2 !important;
+  padding:14px 0 !important;
+  border-radius:12px !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:clamp(.8rem,2vw,.92rem) !important;
+  font-weight:800 !important;
+  background:#111 !important;
+  border:none !important;
+  color:#fff !important;
+  cursor:pointer !important;
+  letter-spacing:.3px !important;
+}
+.fri-btn-crit:active{ opacity:.8 !important }
+
+/* 크게보기 버튼 */
+.fri-expand-btn{
+  position:absolute !important;
+  bottom:10px !important; right:10px !important;
+  background:rgba(0,0,0,.45) !important;
+  color:#fff !important; border:none !important;
+  border-radius:8px !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:.5rem !important; font-weight:600 !important;
+  padding:5px 10px !important; cursor:pointer !important;
+  letter-spacing:.5px !important;
+  backdrop-filter:blur(4px) !important;
+}
+
+@media(max-width:600px){
+  .fri-title{ font-size:1rem !important }
+  .fri-btn-crit{ font-size:.82rem !important }
+  .fri-btn-skip{ font-size:.76rem !important }
+  .fri-body{ padding:10px 16px 4px !important }
+  .fri-actions{ padding:8px 14px 12px !important }
+}
+
+/* ══ nav 우측 버튼들 — 확실하게 보이게 ══ */
+.nav-btn{
+  background:#f5f5f5 !important;
+  border:1.5px solid rgba(0,0,0,.2) !important;
+  color:#111 !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:.62rem !important;
+  font-weight:600 !important;
+  padding:8px 16px !important;
+  border-radius:8px !important;
+  cursor:pointer !important;
+  letter-spacing:.3px !important;
+  transition:all .15s !important;
+  white-space:nowrap !important;
+}
+.nav-btn:hover{
+  background:#eee !important;
+  border-color:rgba(0,0,0,.35) !important;
+  color:#000 !important;
+}
+.nav-btn.danger:hover{
+  background:rgba(217,79,61,.08) !important;
+  border-color:#d94f3d !important;
+  color:#d94f3d !important;
+}
+
+/* 뒤로가기 버튼도 */
+.nav-back-gate{
+  background:#f5f5f5 !important;
+  border:1.5px solid rgba(0,0,0,.2) !important;
+  color:#111 !important;
+  font-size:.6rem !important;
+  font-weight:600 !important;
+  padding:8px 14px !important;
+  border-radius:8px !important;
+}
+.nav-back-gate:hover{
+  background:#eee !important;
+  border-color:rgba(0,0,0,.35) !important;
+}
+
+/* 로그인/가입 버튼 — 특히 강조 */
+#btn-login-nav{
+  background:#111 !important;
+  border-color:#111 !important;
+  color:#fff !important;
+  font-weight:700 !important;
+}
+#btn-login-nav:hover{
+  background:#333 !important;
+  border-color:#333 !important;
+}
+
+/* 로그아웃 버튼 */
+#btn-logout{
+  background:#f5f5f5 !important;
+  border-color:rgba(0,0,0,.2) !important;
+  color:#555 !important;
+}
+#btn-logout:hover{
+  border-color:#d94f3d !important;
+  color:#d94f3d !important;
+  background:#fff5f5 !important;
+}
+
+/* "디자이너로 보기" 버튼 (일반인 모드) */
+.gm-home{
+  background:#f5f5f5 !important;
+  border:1.5px solid rgba(0,0,0,.2) !important;
+  color:#111 !important;
+  font-family:'Syne',sans-serif !important;
+  font-size:.56rem !important;
+  font-weight:700 !important;
+  padding:7px 14px !important;
+  border-radius:8px !important;
+  letter-spacing:.3px !important;
+}
+.gm-home:hover{
+  background:#eee !important;
+  border-color:rgba(0,0,0,.35) !important;
+}
