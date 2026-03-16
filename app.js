@@ -270,6 +270,9 @@ function enterApp(){
   document.getElementById('app').style.display='block';
   document.getElementById('landing').style.display='grid';
   ['tab-feed','tab-recruit','tab-study'].forEach(id=>document.getElementById(id).style.display='none');
+  // 로그인 후엔 뒤로가기 숨기기
+  const backBtn=document.getElementById('nav-back-gate');
+  if(backBtn) backBtn.style.display='none';
   updateNavAuth();gateUpdate();
 }
 function closeAuthScreen(){document.getElementById('auth-screen').style.display='none';document.getElementById('app').style.display='block'}
@@ -1191,6 +1194,9 @@ function enterAsDesigner(){
   document.getElementById('app').style.display='block';
   document.getElementById('landing').style.display='grid';
   ['tab-feed','tab-recruit','tab-study'].forEach(id=>document.getElementById(id).style.display='none');
+  // 뒤로가기 버튼 표시
+  const backBtn=document.getElementById('nav-back-gate');
+  if(backBtn) backBtn.style.display='';
   updateNavAuth();
 }
 function enterAsGeneral(){
