@@ -1,3 +1,21 @@
+// ══ 보안 — XSS 방지 ══
+function escapeHtml(str){
+  if(!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#x27;')
+    .replace(/\//g,'&#x2F;');
+}
+
+// 입력값 길이 제한
+function sanitize(str, maxLen=500){
+  if(!str) return '';
+  return escapeHtml(str.trim().substring(0, maxLen));
+}
+
 
 // ══ 일반인 상세보기 + 피드백 ══
 function gmOpenDetail(postId, e){
@@ -234,13 +252,36 @@ async function doLogin(){
   const password=getPin('login');
   if(!username){errEl.textContent='아이디를 입력해요';return}
   if(password.length<4){errEl.textContent='PIN 4자리를 입력해요';return}
+  // 로그인 시도 횟수 제한 (5회)
+  const attemptKey='rv_attempts_'+username;
+  const lockKey='rv_lock_'+username;
+  const lockUntil=parseInt(localStorage.getItem(lockKey)||'0');
+  if(Date.now()<lockUntil){
+    const mins=Math.ceil((lockUntil-Date.now())/60000);
+    errEl.textContent=`너무 많이 시도했어요. ${mins}분 후에 다시 시도해줘요.`;
+    resetPin('login');return;
+  }
+  const attempts=parseInt(localStorage.getItem(attemptKey)||'0');
   // role 컬럼 없는 기존 계정도 호환
   const rows=await sb.get('profiles',`username=eq.${encodeURIComponent(username)}&select=id,username,password_hash,role`);
   if(!rows.length){errEl.textContent='존재하지 않는 아이디예요';return}
   const user=rows[0];
   const hash=await simpleHash(password);
-  if(user.password_hash!==hash){errEl.textContent='비밀번호가 틀렸어요';return}
-  // role 없으면 admin은 designer, 나머지는 designer 기본값
+  if(user.password_hash!==hash){
+    const newAttempts=attempts+1;
+    localStorage.setItem(attemptKey, newAttempts);
+    if(newAttempts>=5){
+      localStorage.setItem(lockKey, Date.now()+10*60*1000); // 10분 잠금
+      localStorage.removeItem(attemptKey);
+      errEl.textContent='5회 틀렸어요. 10분 후에 다시 시도해줘요.';
+    }else{
+      errEl.textContent=`비밀번호가 틀렸어요. (${newAttempts}/5)`;
+    }
+    resetPin('login');return;
+  }
+  // 로그인 성공 시 카운트 초기화
+  localStorage.removeItem(attemptKey);
+  localStorage.removeItem(lockKey);
   const role = user.role || (user.username===ADMIN ? 'designer' : 'designer');
   cu={id:user.id,username:user.username,role};
   saveL();resetPin('login');enterApp();
@@ -546,6 +587,7 @@ async function sendComment(){
   if(!requireLogin('피드백을 남기려면 로그인 해줘요!'))return;
   const text=document.getElementById('c-input').value.trim();
   if(!text){toast('내용을 입력해요');return}
+  if(text.length>500){toast('500자 이하로 입력해줘요');return}
   if(!curType){toast('피드백 타입을 선택해요');return}
   const p=posts.find(x=>x.id===curPost);
   const authorName=isAnon?'익명':cu.username;
@@ -593,8 +635,8 @@ function toggleW(btn){
 }
 
 async function doPost(){
-  const title=document.getElementById('u-title').value.trim();
-  const desc=document.getElementById('u-desc').value.trim();
+  const title=document.getElementById('u-title').value.trim().substring(0,100);
+  const desc=document.getElementById('u-desc').value.trim().substring(0,1000);
   const ver=document.getElementById('u-version').value;
   const wanted=[...document.querySelectorAll('#open-view .w-opt.on')].map(b=>b.dataset.v);
   if(!title){toast('제목을 입력해요');return}
